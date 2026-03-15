@@ -2,7 +2,7 @@
 
 configuration::configuration(int argc, char *argv[]) {
     if (argc < 3) {
-        throw "Try ./alg <shell script> <path of result file>" ;
+        throw std::invalid_argument("Try ./alg <shell script> <path of result file>");
     }
     sh_path = argv[1];
     result_path = argv[2];

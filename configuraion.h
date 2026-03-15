@@ -1,6 +1,7 @@
 #ifndef CONFIGURATION_H_
 #include <string>
 #include <sstream>
+#include <stdexcept>
 class configuration {
 private:
     char *sh_path;
