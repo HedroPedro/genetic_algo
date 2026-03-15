@@ -1,5 +1,7 @@
 #ifndef PARAMETERS_H_
 #define PARAMETERS_H_
+#include <sstream>
+#include <fstream>
 #include "utils.h"
 using std::min;
 using std::max;
@@ -23,14 +25,34 @@ private:
     uint ext_size;
     double fitness = 0.;
 public:
-    parameter() : q_val(get_random(min_q_val, max_q_val)), bw(get_random(min_bw, max_bw)), 
+    parameter(void) : q_val(get_random(min_q_val, max_q_val)), bw(get_random(min_bw, max_bw)), 
         min_fold(get_random(min_min_fold, max_min_fold)), 
         max_fold(get_random(min_max_fold, max_max_fold)), 
         ext_size(get_random(min_ext_size, max_ext_size)) {};
 
-    void crossover(parameter& other);
+    void empty_param() {
+	    this->q_val = 0.;
+	    this->bw = 0;
+	    this->min_fold = 0;
+	    this->max_fold = 0;
+	    this->ext_size = 0;
+    };
 
+    static inline void replace(parameter& to_replace, parameter& replacer) {
+        to_replace.q_val = replacer.q_val;
+        to_replace.bw = replacer.bw;
+        to_replace.min_fold = replacer.min_fold;
+        to_replace.max_fold = replacer.max_fold;
+        to_replace.ext_size = replacer.ext_size;
+        to_replace.fitness = replacer.fitness;
+    };
+
+    void crossover(parameter& other);
     void mutate(void);
+    std::string get_exec_str(void);
+    double set_fitness_from_file(const char *fp);
+
+    inline double get_fitness(void) {return fitness;};
 };
 
 #endif

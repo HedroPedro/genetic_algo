@@ -1,5 +1,9 @@
 #include "utils.h"
 
+uint get_random(uint n) {
+    return rand() % n;
+}
+
 uint get_random(uint min, uint max) {
     int size = max - min;
     return rand() % size + min;
