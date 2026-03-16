@@ -49,7 +49,7 @@ public:
 
     void crossover(parameter& other);
     void mutate(void);
-    std::string get_exec_str(void);
+    std::string get_exec_str(const char *input_fp, const char *macs_dir);
     double set_fitness_from_file(const char *fp);
 
     inline double get_fitness(void) {return fitness;};

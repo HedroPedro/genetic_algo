@@ -13,7 +13,7 @@ void parameter::mutate(void) {
 	switch (arg_to_change) {
 		case 0:
 			delta = get_random(0.001, 0.004);
-			if (decrement) {
+			if (decrement || q_val == max_q_val) {
 				q_val = max(min_q_val, q_val - delta);
 				break;
 			}
@@ -55,11 +55,13 @@ void parameter::mutate(void) {
 	}
 }
 
-std::string parameter::get_exec_str(void) {
+std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir) {
 	std::ostringstream oss;
-	oss << "macs3 callpeak -t " BASE_DIR "/fasta_no_dup.bam --outdir " MAC3_DIR " -q "
-		<< q_val << " --bw " << bw << " -m " 
-		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 0 -n \"\"";
+	oss << "macs3 callpeak -t " << input_fp;
+	if(macs_dir  != NULL)
+		oss << " --outdir " << macs_dir;
+	oss << " -q " << q_val << " --bw " << bw << " -m " 
+		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 0";
 	return oss.str();
 }
 

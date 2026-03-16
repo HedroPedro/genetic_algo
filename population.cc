@@ -6,17 +6,25 @@ parameter population::find_best(uint generations) {
     uint i, j;
     double fitness, random;
     bool changed;
-    const char *sh_cmd = config.get_sh_exec_cmd().c_str();
+    std::string sh_cmd = config.get_sh_exec_cmd();
+    const char *input_fp = config.get_input_file_path();
+    const char *res_fp = config.get_result_path();
+    const char *macs_dir = config.get_macs_dir();
     std::ofstream csv("generations.csv");
     csv << "Generation;Fitness\n";
     for(i = 0; i < generations; i++) {
         changed = false;
         for(j = 0; j < pop_amount; j++) {
             parameter &cache = params[j];
-            string cmd = cache.get_exec_str();
-            std::system(cmd.c_str());
-            std::system(sh_cmd);
-            fitness = params[j].set_fitness_from_file(TOMTOM_DIR"/tomtom.tsv");
+            string cmd = cache.get_exec_str(input_fp, macs_dir);
+            const char *cmd_c = cmd.c_str();
+            if (std::system(cmd_c)) {
+                std::exit(1);
+            }
+            if (std::system(sh_cmd.c_str())) {
+                std::exit(1);
+            }
+            fitness = params[j].set_fitness_from_file(res_fp);
             std::cout << "Generation:" << i << ';' << "Member:" << j 
                 << ';' << "Fit:" << fitness << '\n';
             if (fitness >= elitist.get_fitness()) {

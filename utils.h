@@ -3,10 +3,6 @@
 #include <random>
 #include <cmath>
 #include <iostream>
-#define BASE_DIR "to_use"
-#define TOMTOM_DIR "tomtom_out"
-#define MEME_DIR "meme_out"
-#define MAC3_DIR "res"
 using uint = unsigned int;
 using std::rand;
 uint get_random(uint n);
