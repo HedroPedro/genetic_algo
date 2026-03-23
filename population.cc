@@ -6,7 +6,8 @@ parameter population::find_best(uint generations) {
     uint i, j;
     double fitness, random;
     bool changed;
-    std::string sh_cmd = config.get_sh_exec_cmd();
+    std::string sh_str = config.get_sh_exec_cmd();
+    const char *sh_cmd = sh_str.c_str();
     const char *input_fp = config.get_input_file_path();
     const char *res_fp = config.get_result_path();
     const char *macs_dir = config.get_macs_dir();
@@ -21,7 +22,7 @@ parameter population::find_best(uint generations) {
             if (std::system(cmd_c)) {
                 std::exit(1);
             }
-            if (std::system(sh_cmd.c_str())) {
+            if (std::system(sh_cmd)) {
                 std::exit(1);
             }
             fitness = params[j].set_fitness_from_file(res_fp);
@@ -40,7 +41,7 @@ parameter population::find_best(uint generations) {
             parameter::replace(params[j], elitist);
         }
 
-        for(j = 0; j < 2; j++) {
+        for(j = 0; j < pop_amount; j++) {
             random = get_random();
             parameter &cache = params[j];
             if (random < crossover_chance) {
