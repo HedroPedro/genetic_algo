@@ -5,12 +5,12 @@ uint get_random(uint n) {
 }
 
 uint get_random(uint min, uint max) {
-    int size = max - min;
+    uint size = max - min + 1;
     return rand() % size + min;
 }
 
 double get_random() {
-    return rand() / RAND_MAX;
+    return (double) rand() / (double) RAND_MAX;
 }
 
 double get_random(double min, double max) {

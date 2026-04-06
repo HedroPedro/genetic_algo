@@ -1,12 +1,12 @@
 #include "parameter.h"
 
 void parameter::crossover(parameter &other) {
-    max_fold = other.max_fold;
+	max_fold = other.max_fold;
 	ext_size = other.ext_size;
 }
 
 void parameter::mutate(void) {
-	uint arg_to_change = get_random(0u, 4u);
+	uint arg_to_change = get_random(0u, 5u);
 	uint step;
 	bool decrement = get_random() < 0.5;
 	double delta;
@@ -65,9 +65,31 @@ std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir) 
 	return oss.str();
 }
 
-double parameter::set_fitness_from_file(const char *fp) {
+double parameter::get_fitness_from_file(const char *fp) {
 	std::ifstream stream(fp);
 	std::string str, token;
+	std::stringstream ss;
+
+	getline(stream, str);
+	getline(stream, str);
+	ss = std::stringstream(str);
+	for(uint i = 0; i < 5; i++) {
+		ss >> token;
+	}
+	fitness = -std::log10(std::stod(token)); //E-Value
+	return fitness;
+}
+
+double parameter::get_fitness_from_file(const char *fp, uint n) {
+	std::ostringstream oss;
+	std::string str(fp);
+	uint index = str.find('/');
+	std::string splt = str.substr(0, index);
+	oss << splt << n << str.substr(index);
+	std::string tmp_str = oss.str();
+	const char *actual_fp = tmp_str.c_str();
+	std::ifstream stream(actual_fp);
+	std::string token;
 	std::stringstream ss;
 
 	getline(stream, str);

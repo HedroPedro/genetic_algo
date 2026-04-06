@@ -30,7 +30,7 @@ public:
         max_fold(get_random(min_max_fold, max_max_fold)), 
         ext_size(get_random(min_ext_size, max_ext_size)) {};
 
-    void empty_param() {
+    inline void empty_param() {
 	    this->q_val = 0.;
 	    this->bw = 0;
 	    this->min_fold = 0;
@@ -50,9 +50,11 @@ public:
     void crossover(parameter& other);
     void mutate(void);
     std::string get_exec_str(const char *input_fp, const char *macs_dir);
-    double set_fitness_from_file(const char *fp);
+    double get_fitness_from_file(const char *fp);
+    double get_fitness_from_file(const char *fp, uint n);
 
     inline double get_fitness(void) {return fitness;};
+	
 };
 
 #endif
