@@ -11,8 +11,9 @@ private:
     char *macs_dir = NULL;
 public:
     configuration(int argc, char *argv[]);
-    std::string get_sh_exec_cmd(uint n);
-    const inline char *get_input_file_path(void) {return input_file_path;}
+	std::string get_sh_exec_cmd();
+	std::string get_sh_exec_cmd(uint n);
+	const inline char *get_input_file_path(void) {return input_file_path;}
     const inline char *get_result_path(void) {return result_path;}
     const inline char *get_macs_dir(void) {return macs_dir;}
 };

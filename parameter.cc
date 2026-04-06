@@ -61,7 +61,17 @@ std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir) 
 	if(macs_dir  != NULL)
 		oss << " --outdir " << macs_dir;
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
-		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 0";
+		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 1";
+	return oss.str();
+}
+
+std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir, uint id) {
+	std::ostringstream oss;
+	oss << "macs3 callpeak -t " << input_fp;
+	if(macs_dir  != NULL)
+		oss << " --outdir " << macs_dir << id;
+	oss << " -q " << q_val << " --bw " << bw << " -m " 
+		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 1";
 	return oss.str();
 }
 

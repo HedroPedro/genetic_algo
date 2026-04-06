@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     #ifndef THREAD
         population pop(20, config);
     #else
-        population_threaded pop(20, config, 4);
+        population_threaded pop(20, config, 2);
     #endif
     auto param = pop.find_best(20);
     const char *input_path = config.get_input_file_path();

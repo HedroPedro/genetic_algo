@@ -14,12 +14,8 @@ inline double execute_param(parameter& cache, const char *input_fp, const char *
 }
 
 inline double execute_param(parameter& cache, const char *input_fp, const char *macs_dir, const char *sh_cmd,  const char *res_fp, uint id) {
-	std::ostringstream os;
-	os << cache.get_exec_str(input_fp, macs_dir) << " -n " << id;
-	string cmd_str = os.str();
+	string cmd_str = cache.get_exec_str(input_fp, macs_dir, id);
 	const char *cmd_c = cmd_str.c_str();
-	os.str("");
-	os.clear();
 	if (std::system(cmd_c)) {
 		std::exit(1);
 	}
@@ -49,7 +45,7 @@ parameter population::find_best(uint generations) {
 	uint i, j;
 	double fitness;
 	bool changed;
-	string sh_str = config.get_sh_exec_cmd(0);
+	string sh_str = config.get_sh_exec_cmd();
 	const char *sh_cmd = sh_str.c_str();
 	const char *input_fp = config.get_input_file_path();
 	const char *res_fp = config.get_result_path();
@@ -86,24 +82,20 @@ parameter population_threaded::find_best(uint generations) {
     parameter better_elitist;
     better_elitist.empty_param();
 
-    std::vector<parameter> elitists;
-    std::vector<std::thread> threads;
+    std::vector<parameter> elitists(n_thread);
+    std::vector<std::thread> threads(n_thread);
     std::vector<thread_pop_config> t_vec;
-
-    elitists.resize(n_thread);
-    threads.resize(n_thread);
     t_vec.reserve(n_thread);
 
     uint amount_per_slice = pop_amount / n_thread;
     const char *macs_dir = config.get_macs_dir();
     const char *input_fp = config.get_input_file_path();
     const char *res_fp   = config.get_result_path();
-    const uint last_iter_id = n_thread + 1;
     bool changed;
 
     for (size_t i = 0; i < n_thread; i++) {
         t_vec.push_back(thread_pop_config(
-            amount_per_slice * i, amount_per_slice, i + 1,
+            amount_per_slice * i, amount_per_slice, i,
             elitists[i],
             config, params, macs_dir, input_fp, res_fp
         ));
@@ -122,9 +114,9 @@ parameter population_threaded::find_best(uint generations) {
 
         for (uint j = amount_per_slice * n_thread; j < pop_amount; j++) {
             parameter &cache = params[j];
-            string sh_str = config.get_sh_exec_cmd(last_iter_id);
+            string sh_str = config.get_sh_exec_cmd(n_thread);
             const char *sh_cmd = sh_str.c_str();
-            double fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp, last_iter_id);
+            double fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp, n_thread);
             if (fitness > better_elitist.get_fitness()) {
                 parameter::replace(better_elitist, cache);
                 changed = true;
