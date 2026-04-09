@@ -11,8 +11,9 @@ configuration::configuration(int argc, char *argv[]) {
         macs_dir = argv[4];
 }
 
-std::string configuration::get_sh_exec_cmd(void) {
+std::string configuration::get_sh_exec_cmd() {
     std::ostringstream oss;
     oss << "./" << sh_path;
     return oss.str();
 }
+

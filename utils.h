@@ -3,6 +3,8 @@
 #include <random>
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <string>
 using uint = unsigned int;
 using std::rand;
 uint get_random(uint n);

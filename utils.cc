@@ -5,7 +5,7 @@ uint get_random(uint n) {
 }
 
 uint get_random(uint min, uint max) {
-    int size = max - min;
+    uint size = max - min + 1;
     return rand() % size + min;
 }
 

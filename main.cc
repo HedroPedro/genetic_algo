@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[]) {
     std::srand(time(NULL));
+    
     configuration config(argc, argv);
     population pop(10, config);
     auto param = pop.find_best(100);
