@@ -53,6 +53,7 @@ parameter population::find_best(uint generations) {
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
 			if(cache.get_same()) continue;
+
 			cache.set_same(true);
 			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp);
 			if (fitness > elitist.get_fitness()) {
@@ -66,7 +67,7 @@ parameter population::find_best(uint generations) {
 		if (!changed) {
 			uint index = get_random(pop_amount);
 			parameter::replace(params[index], elitist);
-			params[index].set_same(false);
+			params[index].set_same(true);
 		}
 
 		new_generation(elitist);
@@ -103,7 +104,7 @@ parameter thread_population::find_best(uint generations) {
 		if (!changed) {
 			uint index = get_random(pop_amount);
 			parameter::replace(params[index], elitist);
-			params[index].set_same(false);
+			params[index].set_same(true);
 		}
 
 		for (j = 0; j < n_threads; j++) {
