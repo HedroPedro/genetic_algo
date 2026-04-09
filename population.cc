@@ -33,14 +33,14 @@ parameter population::find_best(uint generations) {
             }
         }
 
-        csv << i << ';' << elitist.get_fitness() << '\n';
+        csv << i << ';' << elitist.get_fitness() << std::endl;
 
         if (!changed) {
             j = get_random(pop_amount);
             parameter::replace(params[j], elitist);
         }
 
-        for(j = 0; j < 2; j++) {
+        for(j = 0; j < pop_amount; j++) {
             random = get_random();
             parameter &cache = params[j];
             if (random < crossover_chance) {

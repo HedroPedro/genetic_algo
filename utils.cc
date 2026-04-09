@@ -10,7 +10,7 @@ uint get_random(uint min, uint max) {
 }
 
 double get_random() {
-    return rand() / RAND_MAX;
+    return (double) rand() / (double) RAND_MAX;
 }
 
 double get_random(double min, double max) {

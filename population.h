@@ -22,7 +22,7 @@ private:
     configuration config;
 public:
     population(uint pop_amount, configuration config): params(new parameter[pop_amount]), pop_amount(pop_amount),
-        crossover_chance(0.6), mutation_rate(0.05), config(config) {};
+        crossover_chance(0.6), mutation_rate(0.1), config(config) {};
     ~population() {delete params;};
     parameter find_best(uint generations);
 };

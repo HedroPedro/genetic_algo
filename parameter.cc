@@ -6,7 +6,7 @@ void parameter::crossover(parameter &other) {
 }
 
 void parameter::mutate(void) {
-	uint arg_to_change = get_random(0u, 4u);
+	uint arg_to_change = get_random(5u);
 	uint step;
 	bool decrement = get_random() < 0.5;
 	double delta;
@@ -21,7 +21,7 @@ void parameter::mutate(void) {
 		break;
 		case 1:
 			step = get_random(5U, 25U);
-			if (decrement) {
+			if (decrement || bw == max_bw) {
 				bw = max(min_bw, bw - step);
 				break;
 			}
@@ -29,7 +29,7 @@ void parameter::mutate(void) {
 		break;
 		case 2:
 			step = get_random(1U, 4U);
-			if(decrement) {
+			if(decrement || min_fold == max_min_fold) {
 				min_fold = max(min_min_fold,  min_fold - step);			
 				break;
 			}
@@ -37,7 +37,7 @@ void parameter::mutate(void) {
 		break;
 		case 3:
 			step = get_random(5U, 15U);
-			if(decrement) {
+			if(decrement || max_fold == max_max_fold) {
 				max_fold = max(min_max_fold, max_fold - step);
 				break;
 			}
@@ -46,7 +46,7 @@ void parameter::mutate(void) {
 		case 4:
 		default:
 			step = get_random(10U, 100U);
-			if(decrement) {
+			if(decrement || ext_size == max_ext_size) {
 				ext_size = max(min_ext_size, ext_size - step);
 				break;
 			}
