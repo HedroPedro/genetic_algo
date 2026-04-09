@@ -1,5 +1,4 @@
 #include "population.h"
-#include "parameter.h"
 
 inline double execute_param(parameter& cache, const char *input_fp, const char *macs_dir, const char *sh_cmd, const char *res_fp) {
 	string cmd = cache.get_exec_str(input_fp, macs_dir);
@@ -19,12 +18,24 @@ inline void population::new_generation(parameter &elitist) {
 		parameter &cache = params[j];
 		if (random <= crossover_chance) {
 			cache.crossover(elitist);
-			cache.set_same(true);
 		}
 		random = get_random();
 		if (random <= mutation_rate) {
 			cache.mutate();
-			cache.set_same(true);
+		}
+	}
+}
+
+inline void population::new_generation_start_at(uint s, parameter &elitist) {
+	for(uint i = s; s < pop_amount; i++) {
+		double random = get_random();
+		parameter &cache = params[i];
+		if (random <= crossover_chance) {
+			cache.crossover(elitist);
+		}
+		random = get_random();
+		if (random <= mutation_rate) {
+			cache.mutate();
 		}
 	}
 }
@@ -32,22 +43,17 @@ inline void population::new_generation(parameter &elitist) {
 parameter population::find_best(uint generations) {
 	parameter elitist;
 	elitist.empty_param();
-	uint i, j;
+	uint j;
 	double fitness;
 	bool changed;
-	string sh_str = config.get_sh_exec_cmd();
-	const char *sh_cmd = sh_str.c_str();
-	const char *input_fp = config.get_input_file_path();
-	const char *res_fp = config.get_result_path();
-	const char *macs_dir = config.get_macs_dir();
 	std::ofstream csv("generations.csv");
-	csv << "Generation;Fitness\n";
-	for(i = 0; i < generations; i++) {
+	csv << "Generation;Fitness\n" << std::endl;
+	for(uint i = 0; i < generations; i++) {
 		changed = false;
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
 			if(cache.get_same()) continue;
-			cache.set_same(false);
+			cache.set_same(true);
 			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp);
 			if (fitness > elitist.get_fitness()) {
 				parameter::replace(elitist, cache);
@@ -58,7 +64,71 @@ parameter population::find_best(uint generations) {
         csv << i << ';' << elitist.get_fitness() << std::endl;
 
 		if (!changed) {
-
+			uint index = get_random(pop_amount);
+			parameter::replace(params[index], elitist);
+			params[index].set_same(false);
 		}
+
+		new_generation(elitist);
+	}
+	csv.close();
+	return elitist;
+}
+
+parameter thread_population::find_best(uint generations) {
+    parameter elitist;
+	elitist.empty_param();
+	vector<thread> threads(n_threads);
+	uint slices = pop_amount/n_threads;
+	uint j;
+	bool changed;
+	double fitness;
+	std::ofstream csv("generations.csv");
+	csv << "Generation;Fitness\n" << std::endl;
+	for (uint i = 0; i < generations; i++) {
+		changed = false;
+		for(j = 0; j < pop_amount; j++) {
+			parameter &cache = params[j];
+			if(cache.get_same()) continue;
+			cache.set_same(true);
+			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp);
+			if (fitness > elitist.get_fitness()) {
+				parameter::replace(elitist, cache);
+				changed = true;
+			}
+		}
+
+		csv << i << ';' << elitist.get_fitness() << std::endl;
+
+		if (!changed) {
+			uint index = get_random(pop_amount);
+			parameter::replace(params[index], elitist);
+			params[index].set_same(false);
+		}
+
+		for (j = 0; j < n_threads; j++) {
+			threads[j] = thread(&thread_population::new_gen, this, j*slices, slices, std::ref(elitist));
+		}
+
+		for (thread &t : threads) {
+			if(t.joinable()) t.join();
+		}
+
+		new_generation_start_at(n_threads*slices, elitist);
+
+	}
+	csv.close();
+	return elitist;
+}
+
+void thread_population::new_gen(uint offset, uint amount, parameter &elitist) {
+	uint end = offset+amount;
+	for (uint i = offset; i < end; i++) {
+		double random = get_random();
+		parameter &cache = params[i];
+		if (random <= crossover_chance) cache.crossover(elitist);
+		
+		random = get_random();
+		if (random <= mutation_rate) cache.mutate();
 	}
 }

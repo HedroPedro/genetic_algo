@@ -1,11 +1,13 @@
 #include "parameter.h"
 
 void parameter::crossover(parameter &other) {
+	same = false;
 	max_fold = other.max_fold;
 	ext_size = other.ext_size;
 }
 
 void parameter::mutate(void) {
+	same = false;
 	uint arg_to_change = get_random(5u);
 	uint step;
 	bool decrement = get_random() < 0.5;
