@@ -4,6 +4,11 @@ void parameter::crossover(parameter &other) {
 	same = false;
 	max_fold = other.max_fold;
 	ext_size = other.ext_size;
+
+	other.same = false;
+	other.q_val = q_val;
+	other.bw = bw;
+	other.min_fold = min_fold;
 }
 
 void parameter::mutate(void) {
@@ -60,10 +65,9 @@ void parameter::mutate(void) {
 std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir) {
 	std::ostringstream oss;
 	oss << "macs3 callpeak -t " << input_fp;
-	if(macs_dir  != NULL)
-		oss << " --outdir " << macs_dir;
+	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
-		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 1";
+		<< min_fold << ' ' << max_fold << " --extsize " << ext_size;
 	return oss.str();
 }
 
