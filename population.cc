@@ -81,21 +81,20 @@ parameter population::find_best(uint generations) {
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
 			if(cache.get_same()) continue;
-
-			cache.set_same(true);
 			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp);
+			cache.set_same(true);
+			std::cout << "Gen:" << i << ";Member:" << j << ";Fit:" << fitness << std::endl;
 			if (fitness > elitist.get_fitness()) {
-				parameter::replace(elitist, cache);
+				elitist = cache;
 				changed = true;
 			}
-			std::cout << "Gen:" << i << ";Member:" << j << ";Fit:" << fitness;
 		}
 
         csv << i << ';' << elitist.get_fitness() << std::endl;
 
 		if (!changed) {
 			uint index = get_random(pop_amount);
-			parameter::replace(params[index], elitist);
+			params[index] = elitist;
 			params[index].set_same(true);
 		}
 
@@ -129,20 +128,20 @@ parameter thread_population::find_best(uint generations) {
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
 			if(cache.get_same()) continue;
-			cache.set_same(true);
 			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp);
+			cache.set_same(true);
+			std::cout << "Gen:" << i << ";Member:" << j << ";Fit:" << fitness << std::endl;
 			if (fitness > elitist.get_fitness()) {
-				parameter::replace(elitist, cache);
+				elitist = cache;
 				changed = true;
 			}
-			std::cout << "Gen:" << i << ";Member:" << j << ";Fit:" << fitness;
 		}
 
 		csv << i << ';' << elitist.get_fitness() << std::endl;
 
 		if (!changed) {
 			uint index = get_random(pop_amount);
-			parameter::replace(params[index], elitist);
+			params[index] = elitist;
 			params[index].set_same(true);
 		}
 
