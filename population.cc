@@ -75,6 +75,7 @@ parameter population::find_best(uint generations) {
 	string name = oss.str();
 	const char *name_csv = name.c_str();
 	std::ofstream csv(name_csv); 
+	uint current_patience = patience;
 	csv << "Generation;Fitness" << std::endl;
 	for(uint i = 0; i < generations; i++) {
 		changed = false;
@@ -96,6 +97,11 @@ parameter population::find_best(uint generations) {
 			uint index = get_random(pop_amount);
 			params[index] = elitist;
 			params[index].set_same(true);
+			if ((--current_patience) == 0) {
+				break;
+			}
+		} else {
+			current_patience = patience;
 		}
 
 		new_generation();
@@ -109,7 +115,7 @@ parameter thread_population::find_best(uint generations) {
 	elitist.empty_param();
 	vector<thread> threads(n_threads);
 	uint slices = pop_amount/n_threads;
-	uint j;
+	uint j, current_patience = patience;
 	bool changed;
 	double fitness;
 	string sh_str = config.get_sh_exec_cmd();
@@ -143,6 +149,11 @@ parameter thread_population::find_best(uint generations) {
 			uint index = get_random(pop_amount);
 			params[index] = elitist;
 			params[index].set_same(true);
+			if((--current_patience) == 0) {
+				break; 
+			}
+		} else {
+			current_patience = patience;
 		}
 
 		for (j = 0; j < n_threads; j++) {

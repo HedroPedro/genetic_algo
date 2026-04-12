@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
     configuration config(argc, argv);
     population *pop;
     #ifdef THREADS
-    thread_population t(POP_AMOUNT, config, 4);
+    thread_population t(POP_AMOUNT*10, config, 4);
     pop = &t;
     #else
     population p(10, config);
@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
     const char *macs_dir = config.get_macs_dir();
     auto cmd = param.get_exec_str(input_path, macs_dir);
     auto cmd_c = cmd.c_str();
+    std::cout << cmd_c << std::endl;
     std::system(cmd_c);
     return 0;
 }

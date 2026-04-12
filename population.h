@@ -13,6 +13,7 @@ using std::string;
 using std::thread;
 constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 100U;
+constexpr uint PATIENCE = 4u;
 
 class population {
 protected:
@@ -21,9 +22,10 @@ protected:
 	double crossover_chance;
 	double mutation_rate;
 	configuration &config;
+	uint patience;
 public:
 	population(uint pop_amount, configuration &config): params(new parameter[pop_amount]), pop_amount(pop_amount),
-		crossover_chance(0.6), mutation_rate(0.1), config(config) {};
+		crossover_chance(0.6), mutation_rate(0.1), config(config), patience(PATIENCE){};
 	~population() {delete params;};
 	virtual parameter find_best(uint generations);
 	void new_generation();
