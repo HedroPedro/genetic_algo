@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sys/types.h>
 using uint = unsigned int;
 using std::rand;
 uint get_random(uint n);

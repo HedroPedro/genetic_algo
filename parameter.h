@@ -1,10 +1,11 @@
 #ifndef PARAMETERS_H_
 #define PARAMETERS_H_
 #include <sstream>
-#include <fstream>
+#include <algorithm>
 #include "utils.h"
 using std::min;
 using std::max;
+using std::swap;
 
 constexpr double min_q_val = 0.001;
 constexpr double max_q_val = 0.1;
@@ -17,27 +18,29 @@ constexpr uint max_max_fold = 50U;
 constexpr uint min_ext_size = 100U;
 constexpr uint max_ext_size = 300U;
 
+struct _parameter {
+    uint bw;
+    uint min_fold, max_fold;
+    uint ext_size;
+    double q_val;
+    double fitness;
+    bool same;
+};
+
 class parameter {
 private:
     double q_val;
     uint bw;
     uint min_fold, max_fold;
     uint ext_size;
-    double fitness = 0.;
-    bool same = false;
+    double fitness;
+    bool same;
 public:
     parameter(void) : q_val(get_random(min_q_val, max_q_val)), bw(get_random(min_bw, max_bw)), 
         min_fold(get_random(min_min_fold, max_min_fold)), 
         max_fold(get_random(min_max_fold, max_max_fold)), 
-        ext_size(get_random(min_ext_size, max_ext_size)) {};
-
-    inline void empty_param() {
-	    this->q_val = 0.;
-	    this->bw = 0;
-	    this->min_fold = 0;
-	    this->max_fold = 0;
-	    this->ext_size = 0;
-    };
+        ext_size(get_random(min_ext_size, max_ext_size)) {
+        };
 
     void crossover(parameter& other);
     void mutate(void);
@@ -48,5 +51,9 @@ public:
     inline void set_same(bool same) {this->same = same;}
     inline bool get_same() {return same;}
 };
+
+void new__parameter(_parameter &param);
+void crossover(_parameter &a, _parameter &b);
+void mutate(_parameter &a);
 
 #endif
