@@ -66,12 +66,13 @@ void parameter::mutate(void) {
 	}
 }
 
-std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir) {
+std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir,  const char *other_params) {
 	std::ostringstream oss;
 	oss << "macs3 callpeak -t " << input_fp;
 	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
 		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 1";
+	if(other_params != NULL) oss << ' ' << other_params;
 	return oss.str();
 }
 

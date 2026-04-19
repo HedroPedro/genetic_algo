@@ -5,16 +5,18 @@
 
 class configuration {
 private:
-    char *input_file_path;
-    char *sh_path;
-    char *result_path;
-    char *macs_dir = NULL;
+	char *input_file_path;
+	char *sh_path;
+	char *result_path;
+	char *macs_dir = NULL;
+	char *other_params = NULL;
 public:
-    configuration(int argc, char *argv[]);
+	configuration(int argc, char *argv[]);
 	std::string get_sh_exec_cmd();
 	const inline char *get_input_file_path(void) {return input_file_path;}
-    const inline char *get_result_path(void) {return result_path;}
-    const inline char *get_macs_dir(void) {return macs_dir;}
+	const inline char *get_result_path(void) {return result_path;}
+	const inline char *get_macs_dir(void) {return macs_dir;}
+	const inline char *get_other_params(void) {return other_params;}
 };
 
 #endif
