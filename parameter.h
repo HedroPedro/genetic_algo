@@ -19,37 +19,37 @@ constexpr uint min_ext_size = 100U;
 constexpr uint max_ext_size = 300U;
 
 struct _parameter {
-    uint bw;
-    uint min_fold, max_fold;
-    uint ext_size;
-    double q_val;
-    double fitness;
-    bool same;
+	uint bw;
+	uint min_fold, max_fold;
+	uint ext_size;
+	double q_val;
+	double fitness;
+	bool same;
 };
 
 class parameter {
 private:
-    double q_val;
-    uint bw;
-    uint min_fold, max_fold;
-    uint ext_size;
-    double fitness;
-    bool same;
+	double q_val;
+	uint bw;
+	uint min_fold, max_fold;
+	uint ext_size;
+	double fitness;
+	bool same;
 public:
-    parameter(void) : q_val(get_random(min_q_val, max_q_val)), bw(get_random(min_bw, max_bw)), 
-        min_fold(get_random(min_min_fold, max_min_fold)), 
-        max_fold(get_random(min_max_fold, max_max_fold)), 
-        ext_size(get_random(min_ext_size, max_ext_size)) {
-        };
+	parameter(void) : q_val(get_random(min_q_val, max_q_val)), bw(get_random(min_bw, max_bw)), 
+		min_fold(get_random(min_min_fold, max_min_fold)), 
+		max_fold(get_random(min_max_fold, max_max_fold)), 
+		ext_size(get_random(min_ext_size, max_ext_size)) {
+		};
 
-    void crossover(parameter& other);
-    void mutate(void);
-    std::string get_exec_str(const char *input_fp, const char *macs_dir, const char *other_params);
+	void crossover(parameter& other);
+	void mutate(void);
+	std::string get_exec_str(const char *input_fp, const char *macs_dir, const char *other_params);
 	double get_fitness_from_file(const char *fp);
 
-    inline double get_fitness(void) {return fitness;};
-    inline void set_same(bool same) {this->same = same;}
-    inline bool get_same() {return same;}
+	inline double get_fitness(void) {return fitness;};
+	inline void set_same(bool same) {this->same = same;}
+	inline bool get_same() {return same;}
 };
 
 void new__parameter(_parameter &param);

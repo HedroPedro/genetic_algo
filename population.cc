@@ -9,24 +9,24 @@ inline double execute_param(parameter& cache, const char *input_fp, const char *
 }
 
 inline void serial_population::new_generation() {
-    for (uint j = 0; j + 1 < pop_amount; j += 2) {
-        parameter &a = params[j];
-        parameter &b = params[j + 1];
+	for (uint j = 0; j + 1 < pop_amount; j += 2) {
+		parameter &a = params[j];
+		parameter &b = params[j + 1];
 
-        if (get_random() <= crossover_chance) {
+		if (get_random() <= crossover_chance) {
 			a.crossover(b);
 		} else {
 			uint index = get_random(2);
 			params[j+index] = parameter();
 		}
-        
-        if (get_random() <= mutation_rate) a.mutate();
-        if (get_random() <= mutation_rate) b.mutate();
-    }
+		
+		if (get_random() <= mutation_rate) a.mutate();
+		if (get_random() <= mutation_rate) b.mutate();
+	}
 
-    if (pop_amount & 1) {
-        if (get_random() <= mutation_rate) params[pop_amount - 1].mutate();
-    }
+	if (pop_amount & 1) {
+		if (get_random() <= mutation_rate) params[pop_amount - 1].mutate();
+	}
 }
 
 parameter serial_population::find_best(uint generations) {
@@ -61,7 +61,7 @@ parameter serial_population::find_best(uint generations) {
 			}
 		}
 
-        csv << i << ';' << elitist.get_fitness() << ';'  << elitist.get_exec_str(input_fp, macs_dir, other_params) << std::endl;
+		csv << i << ';' << elitist.get_fitness() << ';'  << elitist.get_exec_str(input_fp, macs_dir, other_params) << std::endl;
 
 		if (!changed) {
 			uint index = get_random(pop_amount);
