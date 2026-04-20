@@ -6,6 +6,7 @@
 using std::min;
 using std::max;
 using std::swap;
+using std::string;
 
 constexpr double min_q_val = 0.001;
 constexpr double max_q_val = 0.1;
@@ -44,7 +45,7 @@ public:
 
     void crossover(parameter& other);
     void mutate(void);
-    std::string get_exec_str(const char *input_fp, const char *macs_dir);
+    string get_exec_str(const char *input_fp, const char *macs_dir);
 	double get_fitness_from_file(const char *fp);
 
     inline double get_fitness(void) {return fitness;};
@@ -52,8 +53,11 @@ public:
     inline bool get_same() {return same;}
 };
 
+/* This functions serves the same pouprse as the class one but for paralel aiaiai */
+
 void new__parameter(_parameter &param);
 void crossover(_parameter &a, _parameter &b);
 void mutate(_parameter &a);
+string get_exec_str(_parameter& param, const char *input_fp, const char *macs_dir);
 
 #endif

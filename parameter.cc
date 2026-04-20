@@ -66,7 +66,7 @@ void parameter::mutate(void) {
 	}
 }
 
-std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir) {
+string parameter::get_exec_str(const char *input_fp, const char *macs_dir) {
 	std::ostringstream oss;
 	oss << "macs3 callpeak -t " << input_fp;
 	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;
@@ -91,7 +91,12 @@ double parameter::get_fitness_from_file(const char *fp) {
 }
 
 inline void new__parameter(_parameter &param) {
-
+	param.q_val = get_random(min_q_val, max_q_val); 
+	param.bw = get_random(min_bw, max_bw); 
+    param.min_fold = get_random(min_min_fold, max_min_fold); 
+    param.max_fold = get_random(min_max_fold, max_max_fold);
+    param.ext_size = get_random(min_ext_size, max_ext_size);
+	param.same = false;
 }
 
 void crossover(_parameter &a, _parameter &b) {
@@ -160,5 +165,15 @@ void mutate(_parameter &param) {
 		break;
 	}
 
-	if(param.min_fold > param.max_fold) (param.min_fold, param.max_fold);
+	if(param.min_fold > param.max_fold) swap(param.min_fold, param.max_fold);
+}
+
+string get_exec_str(_parameter& param, const char *input_fp, const char *macs_dir) {
+	std::ostringstream oss;
+	std::ostringstream oss;
+	oss << "macs3 callpeak -t " << input_fp;
+	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;
+	oss << " -q " << param.q_val << " --bw " << param.bw << " -m " 
+		<< param.min_fold << ' ' << param.max_fold << " --extsize " << param.ext_size << " --verbose 1";
+	return oss.str();
 }

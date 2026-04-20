@@ -4,7 +4,7 @@ int main(int argc, char *argv[]) {
     std::srand(time(NULL));
     configuration config(argc, argv);
     population *pop;
-    serial_population p(POP_AMOUNT*10, config);
+    serial_population p(POP_AMOUNT, config);
     pop = &p;
     auto param = pop->find_best(GENERATIONS);
     const char *input_path = config.get_input_file_path();

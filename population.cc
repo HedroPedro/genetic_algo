@@ -1,5 +1,9 @@
 #include "population.h"
 
+static void generic(int sig) {
+	(int) sig;
+}
+
 inline double execute_param(parameter& cache, const char *input_fp, const char *macs_dir, const char *sh_cmd, const char *res_fp) {
 	string cmd = cache.get_exec_str(input_fp, macs_dir);
 	const char *cmd_c = cmd.c_str();
@@ -77,4 +81,29 @@ parameter serial_population::find_best(uint generations) {
 	}
 	csv.close();
 	return elitist;
+}
+
+void paralel_population::init_workers() {
+	pid_t father = getpid();
+	uint slice = pop_amount/n_children;
+	sigset_t *set;
+	for(uint i = 0; i < n_children; i++) {
+		_worker_info *info = &workers_info[i];
+		info->mutex = mutex;
+		info->n_done = n_done;
+		info->params = params;
+		info->parent = father;
+		info->slice = slice;
+		info->start = i*slice;
+		clone(worker_func, worker_stacks[i]+STACK_SIZE, SIGCHLD, info);
+	}
+	struct sigaction sa = {0};
+	sa.sa_handler = generic;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGUSR2, &sa, NULL);
+
+}
+
+parameter paralel_population::find_best(uint generations) {
+
 }
