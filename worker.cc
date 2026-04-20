@@ -38,7 +38,7 @@ int worker_func(void *args) {
 			pthread_mutex_unlock(mutex);
 			break;
 		case RUN_PARAMS:
-
+			
 			break;
 		case BREED_POP:
 			break;
