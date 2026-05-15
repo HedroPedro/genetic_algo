@@ -80,7 +80,11 @@ parameter serial_population::find_best(uint generations) {
 	return elitist;
 }
 
-void paralel_population::init_workers() {
+static void generic(int sig) {
+	(int) sig;
+}
+
+/*void paralel_population::init_workers() {
 	pid_t father = getpid();
 	uint slice = pop_amount/n_children;
 	sigset_t *set;
@@ -103,4 +107,4 @@ void paralel_population::init_workers() {
 
 parameter paralel_population::find_best(uint generations) {
 
-}
+}*/

@@ -4,7 +4,7 @@ static void generic(int sig) {
 	(int) sig;
 }
 
-int worker_func(void *args) {
+/*int worker_func(void *args) {
 	_worker_info *info = (_worker_info *) args;
 	uint start = info->start;
 	uint last = info->slice + start;
@@ -50,4 +50,4 @@ int worker_func(void *args) {
 	}
 
 	return 0;
-}
+}*/

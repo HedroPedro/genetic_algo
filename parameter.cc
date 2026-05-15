@@ -64,6 +64,8 @@ void parameter::mutate(void) {
 			ext_size = min(max_ext_size, ext_size + step);
 		break;
 	}
+
+	if(min_fold > max_fold) swap(min_fold, max_fold);
 }
 
 std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir,  const char *other_params) {
@@ -71,7 +73,7 @@ std::string parameter::get_exec_str(const char *input_fp, const char *macs_dir, 
 	oss << "macs3 callpeak -t " << input_fp;
 	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
-		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 1";
+		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 2";
 	if(other_params != NULL) oss << ' ' << other_params;
 	return oss.str();
 }
@@ -170,7 +172,6 @@ void mutate(_parameter &param) {
 }
 
 string get_exec_str(_parameter& param, const char *input_fp, const char *macs_dir) {
-	std::ostringstream oss;
 	std::ostringstream oss;
 	oss << "macs3 callpeak -t " << input_fp;
 	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;

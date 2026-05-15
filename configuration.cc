@@ -9,7 +9,7 @@ configuration::configuration(int argc, char *argv[]) {
 	result_path = argv[3];
 	if(argc > 4)
 		macs_dir = argv[4];
-	if(argc > 5)
+	if(argc == 6)
 		other_params = argv[5];
 }       
 

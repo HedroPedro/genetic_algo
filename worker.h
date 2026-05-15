@@ -9,6 +9,7 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <stdatomic.h>
+#include "parameter.h"
 
 #include "parameter.h"
 constexpr size_t STACK_SIZE = (1024*1024);
