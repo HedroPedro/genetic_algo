@@ -1,14 +1,14 @@
-#ifndef POPULATION_H_
-#define POPULATION_H_
+#ifndef GENETIC_H_
+#define GENETIC_H_
 #include <cstdlib>
 #include <numeric>
+#include <chrono>
 #include "parameter.h"
 #include "utils.h"
 #include "configuration.h"
 constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 100U;
-constexpr uint BUDGET = 10000u;
-constexpr uint PATIENCE = 10u;
+constexpr uint PATIENCE = 35u;
 constexpr uint VAR_JANELA = 10;
 constexpr double VAR_THRESH = 0.05;
 
@@ -46,7 +46,7 @@ protected:
 
 public:
 	population(uint pop_amount, configuration &config) : pop_amount(pop_amount),
-		crossover_chance(0.6), mutation_rate(0.1), config(config), patience(PATIENCE), elitist(parameter()) {};
+		crossover_chance(0.6), mutation_rate(0.05), config(config), patience(PATIENCE), elitist(parameter()) {};
 	virtual parameter find_best(uint generations) = 0;
 };
 
