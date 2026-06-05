@@ -7,6 +7,7 @@
 #include "configuration.h"
 constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 100U;
+constexpr uint BUDGET = 10000u;
 constexpr uint PATIENCE = 10u;
 constexpr uint VAR_JANELA = 10;
 constexpr double VAR_THRESH = 0.05;

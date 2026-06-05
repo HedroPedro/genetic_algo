@@ -32,7 +32,7 @@ inline void serial_population::new_generation() {
 	}
 }
 
-parameter serial_population::find_best(uint generations) {
+parameter serial_population::find_best(uint budget) {
 	uint j;
 	double fitness;
 	bool changed;
@@ -44,6 +44,7 @@ parameter serial_population::find_best(uint generations) {
 	const char *other_params = config.get_other_params();
 	std::vector<double> history_var;
 	std::ostringstream oss;
+	uint generations = std::min<uint>(budget / pop_amount, 1);
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	string name = oss.str();
 	const char *name_csv = name.c_str();
