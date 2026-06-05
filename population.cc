@@ -3,7 +3,7 @@
 inline double execute_param(parameter& cache, const char *input_fp, const char *macs_dir, const char *sh_cmd, const char *res_fp, const char *other_params) {
 	string cmd = cache.get_exec_str(input_fp, macs_dir, other_params);
 	const char *cmd_c = cmd.c_str();
-	if (std::system(cmd_c)) std::exit(1);
+	if (std::system(cmd_c)) return 0.0;
 	if (std::system(sh_cmd)) std::exit(1);
 	return cache.get_fitness_from_file(res_fp);
 }
@@ -22,6 +22,9 @@ inline void serial_population::new_generation() {
 		
 		if (get_random() <= mutation_rate) a.mutate();
 		if (get_random() <= mutation_rate) b.mutate();
+
+		if (a == elitist) a.same = true;
+		if (b == elitist) b.same = true;
 	}
 
 	if (pop_amount & 1) {
@@ -30,7 +33,6 @@ inline void serial_population::new_generation() {
 }
 
 parameter serial_population::find_best(uint generations) {
-	parameter elitist;
 	uint j;
 	double fitness;
 	bool changed;
@@ -40,33 +42,50 @@ parameter serial_population::find_best(uint generations) {
 	const char *macs_dir = config.get_macs_dir();
 	const char *res_fp = config.get_result_path();
 	const char *other_params = config.get_other_params();
+	std::vector<double> history_var;
 	std::ostringstream oss;
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	string name = oss.str();
 	const char *name_csv = name.c_str();
 	std::ofstream csv(name_csv); 
-	uint current_patience = patience;
-	csv << "Generation;Fitness;Param" << std::endl;
+	csv << "Generation;Fitness;Param;Budget;Variance\n";
+	auto current_patience = patience;
 	for(uint i = 0; i < generations; i++) {
 		changed = false;
+		uint budget = 0;
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
-			if(cache.get_same()) continue;
+			if(cache.same) continue;
 			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp, other_params);
-			cache.set_same(true);
+			cache.same = true;
+			budget++;
 			std::cout << "Gen:" << i << ";Member:" << j << ";Fit:" << fitness << std::endl;
-			if (fitness > elitist.get_fitness()) {
+			if (fitness > elitist.fitness) {
 				elitist = cache;
 				changed = true;
 			}
 		}
 
-		csv << i << ';' << elitist.get_fitness() << ';'  << elitist.get_exec_str(input_fp, macs_dir, other_params) << std::endl;
+		double var = pop_var(params, pop_amount);
+		history_var.push_back(var);
+
+		csv << i << ';' << elitist.fitness << ';'  << elitist.get_exec_str(input_fp, macs_dir, other_params) 
+			<< ';' << budget <<  ';' << var << std::endl;
+
+		if (history_var.size() >= VAR_JANELA) {
+			auto end = history_var.end();
+			auto start = end - VAR_JANELA;
+			double mean = std::accumulate(start, end, 0.0) / ((double)VAR_JANELA);
+			double first = *start;
+			if (mean < VAR_THRESH && mean < first) {
+				break;
+			} 
+		}
 
 		if (!changed) {
 			uint index = get_random(pop_amount);
 			params[index] = elitist;
-			params[index].set_same(true);
+			params[index].same = true;
 			if ((--current_patience) == 0) {
 				break;
 			}
@@ -79,32 +98,3 @@ parameter serial_population::find_best(uint generations) {
 	csv.close();
 	return elitist;
 }
-
-static void generic(int sig) {
-	(int) sig;
-}
-
-/*void paralel_population::init_workers() {
-	pid_t father = getpid();
-	uint slice = pop_amount/n_children;
-	sigset_t *set;
-	for(uint i = 0; i < n_children; i++) {
-		_worker_info *info = &workers_info[i];
-		info->mutex = mutex;
-		info->n_done = n_done;
-		info->params = params;
-		info->parent = father;
-		info->slice = slice;
-		info->start = i*slice;
-		clone(worker_func, worker_stacks[i]+STACK_SIZE, SIGCHLD, info);
-	}
-	struct sigaction sa = {0};
-	sa.sa_handler = generic;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGUSR2, &sa, NULL);
-
-}
-
-parameter paralel_population::find_best(uint generations) {
-
-}*/

@@ -1,17 +1,38 @@
 #ifndef POPULATION_H_
 #define POPULATION_H_
 #include <cstdlib>
-#include <stdatomic.h>
-#include <signal.h>
+#include <numeric>
 #include "parameter.h"
 #include "utils.h"
 #include "configuration.h"
-#include "worker.h"
-using std::vector;
-using std::string;
 constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 100U;
-constexpr uint PATIENCE = 65u;
+constexpr uint PATIENCE = 10u;
+constexpr uint VAR_JANELA = 10;
+constexpr double VAR_THRESH = 0.05;
+
+inline double pop_var(const parameter *params, uint n) {
+	if (n < 2) return 0.0;
+	vector<double> qvals(n), bws(n), min_folds(n), max_folds(n), extsizes(n);
+	
+	for (uint i = 0; i < n; i++) {
+		auto param = params[i];
+		qvals[i] = (param.q_val - min_q_val) / q_val_interv;
+		bws[i] =  (param.bw - min_bw) / ((double) bw_interv);
+		min_folds[i] = (param.min_fold - min_min_fold) / ((double) min_fold_interv);
+		max_folds[i] = (param.max_fold - min_max_fold) / ((double) max_fold_interv);
+		extsizes[i] = (param.ext_size = min_ext_size) / ((double) ext_size_interv);
+	}
+
+	auto stddev = [&](const vector<double>& v) {
+		double mean = std::accumulate(v.begin(), v.end(), 0.0) / v.size();
+		double sum = 0.0;
+		for (double x : v) sum += (x - mean) * (x - mean);
+		return std::sqrt(sum / v.size());
+	};
+
+	return (stddev(qvals) + stddev(bws) + stddev(min_folds) + stddev(max_folds) + stddev(extsizes)) / 5.0;
+}
 
 class population {
 protected:
@@ -20,9 +41,11 @@ protected:
 	double mutation_rate;
 	configuration &config;
 	uint patience;
+	parameter elitist;
+
 public:
 	population(uint pop_amount, configuration &config) : pop_amount(pop_amount),
-		crossover_chance(0.6), mutation_rate(0.1), config(config), patience(PATIENCE){};
+		crossover_chance(0.6), mutation_rate(0.1), config(config), patience(PATIENCE), elitist(parameter()) {};
 	virtual parameter find_best(uint generations) = 0;
 };
 
@@ -36,89 +59,9 @@ public:
 
 	~serial_population() {
 		delete[] params;
-	}
+	};
 
 	parameter find_best(uint generations) override;
 	void new_generation();
 };
-
-class paralel_population : public population {
-private:
-	uint n_children;
-	size_t total_size;
-	u_char *shmmap;
-	pthread_mutex_t *mutex;
-	u_char *type_of_work;
-	_worker_info *workers_info;
-	char *input_shmmap;
-	char *macs_shmmap;
-	_parameter *params;
-	uint *n_done;
-	u_char **worker_stacks;
-	bool keep_waiting;
-
-	void init_workers();
-public:
-	paralel_population(uint pop_amount, uint n_children, configuration &config) : population(pop_amount, config) {
-		total_size = 0;
-		this->n_children = n_children;
-		worker_stacks = new u_char*[n_children];
-		size_t size = 0;
-		const char *input_fp = config.get_input_file_path();
-		const char *macs_dir = config.get_macs_dir();
-		while(input_fp[size++]);
-		total_size += size;
-		size = 0;
-		while(macs_dir[size++]);
-		total_size += size;
-		total_size += sizeof(u_char)+sizeof(_worker_info)*n_children+sizeof(pthread_mutex_t)+sizeof(uint);
-
-		shmmap = (u_char *) mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-		params = (_parameter *) mmap(NULL, sizeof(_parameter)*pop_amount, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-		mutex = (pthread_mutex_t *) shmmap;
-		type_of_work = ((u_char *) mutex) + sizeof(pthread_mutex_t);
-		workers_info = (_worker_info *) ((u_char *) type_of_work)+sizeof(u_char);
-		input_shmmap = (char *) (((u_char *) workers_info) + (sizeof(_worker_info)*n_children));
-		size = 0;
-		while(input_fp[size]) {
-			input_shmmap[size] = input_fp[size]; 
-			size++;
-		}
-		size++;
-		input_shmmap[size] = '\0';
-		macs_shmmap = input_shmmap + size;
-		size = 0;
-		while(macs_dir[size]) {
-			macs_shmmap[size] = macs_dir[size];
-			size++;
-		}
-		size++;
-		macs_shmmap[size] = '\0';
-
-		n_done = (uint *) macs_shmmap + size;
-
-		for(uint i = 0; i < n_children; i++) {
-			worker_stacks[i] = (u_char *) mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_PRIVATE | MAP_STACK, -1, 0);
-		}
-
-		keep_waiting = false;
-		pthread_mutex_init(mutex, NULL);
-
-		init_workers();
-	};
-
-	~paralel_population(){
-		for(uint i = 0; i < n_children; i++) {
-			munmap(worker_stacks[i], STACK_SIZE);
-		}
-		pthread_mutex_destroy(mutex);
-		munmap(shmmap, total_size);
-		munmap(params, sizeof(_parameter)*pop_amount);
-	}
-
-	parameter find_best(uint generations) override;
-};
-
 #endif

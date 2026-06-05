@@ -5,9 +5,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <sys/types.h>
 using uint = unsigned int;
 using std::rand;
+using std::vector;
+using std::string;
 uint get_random(uint n);
 uint get_random(uint min, uint max);
 double get_random();
