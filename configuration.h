@@ -1,4 +1,5 @@
 #ifndef CONFIGURATION_H_
+#define CONFIGURATION_H_
 #include <string>
 #include <sstream>
 #include <stdexcept>
