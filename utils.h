@@ -5,8 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
-#include <sys/types.h>
 using uint = unsigned int;
 using std::rand;
 using std::vector;

@@ -44,6 +44,14 @@ struct parameter {
 		fitness = 0.0;
 		same = false;
 	};
+	inline double execute_param(const char *input_fp, const char *macs_dir, const char *sh_cmd, const char *res_fp, const char *other_params) {
+		same = true;
+		string cmd = get_exec_str(input_fp, macs_dir, other_params);
+		const char *cmd_c = cmd.c_str();
+		if (std::system(cmd_c)) return 0.0;
+		if (std::system(sh_cmd)) std::exit(1);
+		return get_fitness_from_file(res_fp);
+	}
 	bool operator==(const parameter &other) {
 		return bw == other.bw && min_fold == other.min_fold && max_fold == other.max_fold && ext_size == other.ext_size && q_val == other.q_val;
 	};

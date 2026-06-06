@@ -1,13 +1,5 @@
 #include "genetic.h"
 
-inline double execute_param(parameter& cache, const char *input_fp, const char *macs_dir, const char *sh_cmd, const char *res_fp, const char *other_params) {
-	string cmd = cache.get_exec_str(input_fp, macs_dir, other_params);
-	const char *cmd_c = cmd.c_str();
-	if (std::system(cmd_c)) return 0.0;
-	if (std::system(sh_cmd)) std::exit(1);
-	return cache.get_fitness_from_file(res_fp);
-}
-
 inline void serial_genetic::new_generation() {
 	for (uint j = 0; j + 1 < pop_amount; j += 2) {
 		parameter &a = params[j];
@@ -42,7 +34,6 @@ parameter serial_genetic::find_best(uint generations) {
 	const char *macs_dir = config.get_macs_dir();
 	const char *res_fp = config.get_result_path();
 	const char *other_params = config.get_other_params();
-	std::vector<double> history_var;
 	std::ostringstream oss;
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	string name = oss.str();
@@ -57,8 +48,7 @@ parameter serial_genetic::find_best(uint generations) {
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
 			if(cache.same) continue;
-			fitness = execute_param(cache, input_fp, macs_dir, sh_cmd, res_fp, other_params);
-			cache.same = true;
+			fitness = cache.execute_param(input_fp, macs_dir, sh_cmd, res_fp, other_params);
 			budget++;
 			std::cout << "Gen:" << i << ";Member:" << j << ";Fit:" << fitness << std::endl;
 			if (fitness > elitist.fitness) {

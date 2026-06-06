@@ -9,8 +9,6 @@
 constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 1000U;
 constexpr uint PATIENCE = 35u;
-constexpr uint VAR_JANELA = 10;
-constexpr double VAR_THRESH = 0.05;
 
 inline double pop_var(const parameter *params, uint n) {
 	if (n < 2) return 0.0;
