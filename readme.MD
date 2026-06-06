@@ -1,9 +1,6 @@
 # Genetic Algorithm
 	A genetic algorithm to find the best parameters in pipelines for single motifs discovery
 
-# A simple overview
-This genetic algorithm optimizes the best parameters using the e-value, the current
-
 # Requiriments
 - Cpp compiler
 - Your favorite text editor
@@ -20,6 +17,14 @@ This program needs the following arguments (in order and is required for both al
 3. Result file
 4. Optional: Directory name for macs. Defaults to "."
 5. Optional: Other parameters like --broad or -g, like files to treat if have more than one argument you must pass like "[arg 1] [arg 2] ... [arg 3]". Defaults to ""
+
+## Fitness function
+There is only one fitness function at the moment using tomtoms $e$-value
+
+The fitness is obtained via this function:
+$$
+f(x) = - \log_{10}(\min e\text{-value})
+$$
 
 ## Usage example
 ``` bash
