@@ -13,4 +13,4 @@ random: $(SRCS)
 	$(CXX) $(CXX_FLAGS) -o alg_random $(SRCS) -DRANDOM
 
 clean:
-	rm -rf alg
+	rm -rf alg alg_random
