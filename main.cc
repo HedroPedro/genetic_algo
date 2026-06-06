@@ -9,7 +9,8 @@ int main(int argc, char *argv[]) {
 	pop = &p;
 	#else
 	random_search *pop;
-	random_search p(100, config)
+	random_search p(100, config);
+	pop = &p;
 	#endif
 	auto param = pop->find_best(100);
 	const char *input_path = config.get_input_file_path();
