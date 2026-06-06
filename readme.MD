@@ -1,6 +1,9 @@
 # Genetic Algorithm
 	A genetic algorithm to find the best parameters in pipelines for single motifs discovery
 
+# A simple overview
+This genetic algorithm optimizes the best parameters using the e-value, the current
+
 # Requiriments
 - Cpp compiler
 - Your favorite text editor
@@ -10,7 +13,7 @@
 - To compile the random search type `make random`. This will generate the random search in a file named **alg_random**
 
 # How to use
-This program  needs the following arguments (in order and is required for both algorithms)
+This program needs the following arguments (in order and is required for both algorithms)
 
 1.  Files to treat (if have more than one use like this "[file 1] [file 2]...[file n]")
 2. A shell script containing the rest of the pipeline
