@@ -3,10 +3,10 @@
 int main(int argc, char *argv[]) {
 	std::srand(time(NULL));
 	configuration config(argc, argv);
-	population *pop;
-	serial_population p(BUDGET, config);
+	genetic *pop;
+	serial_genetic p(1000, config);
 	pop = &p;
-	auto param = pop->find_best(GENERATIONS);
+	auto param = pop->find_best(10);
 	const char *input_path = config.get_input_file_path();
 	const char *macs_dir = config.get_macs_dir();
 	const char *params = config.get_other_params();

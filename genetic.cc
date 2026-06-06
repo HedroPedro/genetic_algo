@@ -8,7 +8,7 @@ inline double execute_param(parameter& cache, const char *input_fp, const char *
 	return cache.get_fitness_from_file(res_fp);
 }
 
-inline void serial_population::new_generation() {
+inline void serial_genetic::new_generation() {
 	for (uint j = 0; j + 1 < pop_amount; j += 2) {
 		parameter &a = params[j];
 		parameter &b = params[j + 1];
@@ -32,7 +32,7 @@ inline void serial_population::new_generation() {
 	}
 }
 
-parameter serial_population::find_best(uint budget) {
+parameter serial_genetic::find_best(uint generations) {
 	uint j;
 	double fitness;
 	bool changed;
@@ -44,7 +44,6 @@ parameter serial_population::find_best(uint budget) {
 	const char *other_params = config.get_other_params();
 	std::vector<double> history_var;
 	std::ostringstream oss;
-	uint generations = std::min<uint>(budget / pop_amount, 1);
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	string name = oss.str();
 	const char *name_csv = name.c_str();

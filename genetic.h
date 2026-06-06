@@ -7,7 +7,7 @@
 #include "utils.h"
 #include "configuration.h"
 constexpr uint POP_AMOUNT = 100U;
-constexpr uint GENERATIONS = 100U;
+constexpr uint GENERATIONS = 1000U;
 constexpr uint PATIENCE = 35u;
 constexpr uint VAR_JANELA = 10;
 constexpr double VAR_THRESH = 0.05;
@@ -35,7 +35,7 @@ inline double pop_var(const parameter *params, uint n) {
 	return (stddev(qvals) + stddev(bws) + stddev(min_folds) + stddev(max_folds) + stddev(extsizes)) / 5.0;
 }
 
-class population {
+class genetic {
 protected:
 	uint pop_amount;
 	double crossover_chance;
@@ -45,20 +45,20 @@ protected:
 	parameter elitist;
 
 public:
-	population(uint pop_amount, configuration &config) : pop_amount(pop_amount),
+	genetic(uint pop_amount, configuration &config) : pop_amount(pop_amount),
 		crossover_chance(0.6), mutation_rate(0.05), config(config), patience(PATIENCE), elitist(parameter()) {};
 	virtual parameter find_best(uint generations) = 0;
 };
 
-class serial_population : public population {
+class serial_genetic : public genetic {
 private:
 	parameter *params;
 public:
-	serial_population(uint pop_amount, configuration &config) : population(pop_amount, config) {
+	serial_genetic(uint pop_amount, configuration &config) : genetic(pop_amount, config) {
 		params = new parameter[pop_amount];
 	};
 
-	~serial_population() {
+	~serial_genetic() {
 		delete[] params;
 	};
 
