@@ -48,7 +48,7 @@ parameter serial_genetic::find_best(uint generations) {
 	string name = oss.str();
 	const char *name_csv = name.c_str();
 	std::ofstream csv(name_csv); 
-	csv << "Generation;Fitness;Param;Budget;Variance;Time\n";
+	csv << "Generation;Fitness;Param;Budget;Time\n";
 	auto current_patience = patience;
 	for(uint i = 0; i < generations; i++) {
 		changed = false;
@@ -69,21 +69,8 @@ parameter serial_genetic::find_best(uint generations) {
 		auto end = std::chrono::high_resolution_clock::now();
 		auto elapsed = std::chrono::duration<double>(end - start).count();
 
-		double var = pop_var(params, pop_amount);
-		history_var.push_back(var);
-
 		csv << i << ';' << elitist.fitness << ';'  << elitist.get_exec_str(input_fp, macs_dir, other_params) 
-			<< ';' << budget <<  ';' << var << ';' << elapsed<< std::endl;
-
-		/*if (history_var.size() >= VAR_JANELA) {
-			auto end = history_var.end();
-			auto start = end - VAR_JANELA;
-			double mean = std::accumulate(start, end, 0.0) / ((double)VAR_JANELA);
-			double first = *start;
-			if (mean < VAR_THRESH && mean < first) {
-				break;
-			} 
-		}*/
+			<< ';' << budget <<  ';' << elapsed << std::endl;
 
 		if (!changed) {
 			uint index = get_random(pop_amount);
