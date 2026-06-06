@@ -3,7 +3,8 @@
 parameter random_search::find_best(uint generations) {
 	parameter best;
 	auto input_fp = config.get_input_file_path();
-	auto sh_cmd = config.get_sh_exec_cmd().c_str();
+	auto sh_str = config.get_sh_exec_cmd();
+	auto sh_cmd = sh_str.c_str();
 	auto macs_dir = config.get_macs_dir();
 	auto other_params = config.get_other_params();
 	auto res_path = config.get_result_path();
