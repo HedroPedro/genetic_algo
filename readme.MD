@@ -15,7 +15,7 @@ This program needs the following arguments (in order and is required for both al
 1.  Files to treat (if have more than one use like this "[file 1] [file 2]...[file n]")
 2. A shell script containing the rest of the pipeline
 3. Result file
-4. Optional: Directory name for macs. Defaults to "."
+4. Optional: Directory name for macs. Defaults to ""
 5. Optional: Other parameters like --broad or -g, like files to treat if have more than one argument you must pass like "[arg 1] [arg 2] ... [arg 3]". Defaults to ""
 
 ## Fitness function
