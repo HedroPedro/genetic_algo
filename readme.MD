@@ -28,7 +28,7 @@ $$
 
 ## Usage example
 ``` bash
-	./alg experiment.bam pipeline.sh tomtom_out/tomtom.tsv temp "
+	./alg experiment.bam pipeline.sh tomtom_out/tomtom.tsv temp 
 ```
 
 ## Outputs
