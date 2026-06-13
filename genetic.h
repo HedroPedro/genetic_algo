@@ -10,29 +10,6 @@ constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 1000U;
 constexpr uint PATIENCE = 35u;
 
-inline double pop_var(const parameter *params, uint n) {
-	if (n < 2) return 0.0;
-	vector<double> qvals(n), bws(n), min_folds(n), max_folds(n), extsizes(n);
-	
-	for (uint i = 0; i < n; i++) {
-		auto param = params[i];
-		qvals[i] = (param.q_val - min_q_val) / q_val_interv;
-		bws[i] =  (param.bw - min_bw) / ((double) bw_interv);
-		min_folds[i] = (param.min_fold - min_min_fold) / ((double) min_fold_interv);
-		max_folds[i] = (param.max_fold - min_max_fold) / ((double) max_fold_interv);
-		extsizes[i] = (param.ext_size = min_ext_size) / ((double) ext_size_interv);
-	}
-
-	auto stddev = [&](const vector<double>& v) {
-		double mean = std::accumulate(v.begin(), v.end(), 0.0) / v.size();
-		double sum = 0.0;
-		for (double x : v) sum += (x - mean) * (x - mean);
-		return std::sqrt(sum / v.size());
-	};
-
-	return (stddev(qvals) + stddev(bws) + stddev(min_folds) + stddev(max_folds) + stddev(extsizes)) / 5.0;
-}
-
 class genetic {
 protected:
 	uint pop_amount;

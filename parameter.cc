@@ -75,7 +75,6 @@ string parameter::get_exec_str(const char *input_fp, const char *macs_dir,  cons
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
 		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 0";
 	if(other_params != NULL) oss << ' ' << other_params;
-	oss << " &>/dev/null";
 	return oss.str();
 }
 
