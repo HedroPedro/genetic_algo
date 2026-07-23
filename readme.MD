@@ -1,5 +1,5 @@
 # Genetic Algorithm
-	A genetic algorithm to find the best parameters in pipelines for single motifs discovery
+	A genetic algorithm to find the _best parameters in pipelines for single motifs discovery
 
 # Requiriments
 - Cpp compiler
@@ -28,8 +28,12 @@ $$
 
 ## Usage example
 ``` bash
-	./alg experiment.bam pipeline.sh tomtom_out/tomtom.tsv temp 
+	./alg file.ini 
 ```
+
+Or if you have a checkpoint file (must end with .chk)
+
+## Ini 
 
 ## Outputs
 Both algorithms generate csvs following a name convention and internal structure
@@ -40,8 +44,8 @@ Both algorithms generate csvs following a name convention and internal structure
 |Name|Description|
 |----|-----------|
 |Generation|Current Generation Index|
-|Fitness|Best fitness found up to this generation|
-|Params|MACS3 command string for the best individual|
+|Fitness|_best fitness found up to this generation|
+|Params|MACS3 command string for the _best individual|
 |Budget|Unique evalutions perfomed in this generations|
 |Time|Elapsed Time in seconds|
 
@@ -51,8 +55,8 @@ Both algorithms generate csvs following a name convention and internal structure
 |Name|Description|
 |----|-----------|
 |Iter|Current Iteration Index|
-|Fitness|Best fitness found up to this iteration|
-|Params|MACS3 command string for the best point|
+|Fitness|_best fitness found up to this iteration|
+|Params|MACS3 command string for the _best point|
 |Time|Elapsed Time in seconds|
 
 	P.S: Random Search doesn't have a budget because it always execute it's maximum budget
@@ -72,7 +76,6 @@ If you change how the argument are parsed or program name **please** make sure y
 ## Bioinformatic
 - [ ] Testing on other pipelines
 - [ ] Comparation with other hyperparameter methods
-
 
 # License
 This project uses the MIT LICENSE, check [LICENSE](LICENSE) for more information
