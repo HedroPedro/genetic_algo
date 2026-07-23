@@ -15,6 +15,9 @@ void parameter::crossover(parameter &other) {
 	if (other.min_fold > other.max_fold) swap(other.min_fold, other.max_fold);
 }
 
+template<typename T>
+void bump(T *value, T min, T max, T delta);
+
 void parameter::mutate(void) {
 	same = false;
 	uint arg_to_change = get_random(5u);
@@ -75,7 +78,6 @@ string parameter::get_exec_str(const string &input_fp, const string &macs_dir, c
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
 		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 0";
 	if(!other_params.empty()) oss << ' ' << other_params;
-	cout << oss.str() << std::endl;
 	return oss.str();
 }
 
