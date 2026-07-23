@@ -5,10 +5,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-using uint = unsigned int;
+#include <sstream>
+#include <stdint.h>
 using std::rand;
 using std::vector;
 using std::string;
+using std::getline;
+using std::cout;
+using std::ostringstream;
+using std::fstream;
+
 uint get_random(uint n);
 uint get_random(uint min, uint max);
 double get_random();

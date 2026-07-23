@@ -68,19 +68,25 @@ void parameter::mutate(void) {
 	if(min_fold > max_fold) swap(min_fold, max_fold);
 }
 
-string parameter::get_exec_str(const char *input_fp, const char *macs_dir,  const char *other_params) {
-	std::ostringstream oss;
+string parameter::get_exec_str(const string &input_fp, const string &macs_dir, const string &other_params) {
+	ostringstream oss;
 	oss << "macs3 callpeak -t " << input_fp;
-	if(macs_dir  != NULL) oss << " --outdir " << macs_dir;
+	if(!macs_dir.empty()) oss << " --outdir " << macs_dir;
 	oss << " -q " << q_val << " --bw " << bw << " -m " 
 		<< min_fold << ' ' << max_fold << " --extsize " << ext_size << " --verbose 0";
-	if(other_params != NULL) oss << ' ' << other_params;
+	if(!other_params.empty()) oss << ' ' << other_params;
+	cout << oss.str() << std::endl;
 	return oss.str();
 }
 
-double parameter::get_fitness_from_file(const char *fp) {
+double parameter::get_fitness_from_file(const string &fp) {
 	std::ifstream stream(fp);
-	std::string str, token;
+	if(!stream) {
+		cout << "Not able to open " << fp << '\n';
+		exit(1);
+	}
+
+	string str, token;
 	std::stringstream ss;
 
 	getline(stream, str);

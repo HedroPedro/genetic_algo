@@ -1,34 +1,72 @@
 #include "random_search.h"
 
-parameter random_search::find_best(uint generations) {
-	parameter best;
-	if (budget == 0) budget = generations * n_points;
-	auto input_fp = config.get_input_file_path();
-	auto sh_str = config.get_sh_exec_cmd();
+parameter random_search::find_best() {
+	auto generations = config.generations();
+	auto &chk = config.chck();
+
+	if (budget == 0) {
+		budget = generations * n_points; 
+	}
+	
+	auto input_fp = config.experiment();
+	auto sh_str = config.sh_exec_cmd();
 	auto sh_cmd = sh_str.c_str();
-	auto macs_dir = config.get_macs_dir();
-	auto other_params = config.get_other_params();
-	auto res_path = config.get_result_path();
-	std::ostringstream oss;
+	auto macs_dir = config.macs_dir();
+	auto other_params = config.other_params();
+	auto res_path = config.result_path();
+	ostringstream oss;
 	oss << "random_generations_" << generations << '_' << n_points << ".csv";
 	std::ofstream random_csv(oss.str());
 	random_csv << "Iter;Fitness;Params;Time\n";
-	for(uint i = 0; i < generations && budget > 0; i++) {
-		auto start = std::chrono::high_resolution_clock::now();
-		for(uint j = 0; j < n_points; j++) {
-			parameter temp;
-			temp.execute_param(input_fp, macs_dir, sh_cmd, res_path, other_params);
-			budget--;
-			if (temp.fitness > best.fitness) {
-				best = temp;
-			}
-			if (budget == 0) break;
+	auto start = std::chrono::high_resolution_clock::now();
+	for(;budget != 0;) {
+		parameter temp;
+		temp.execute_param(input_fp, macs_dir, sh_cmd, res_path, other_params);
+		budget--;
+		if (budget % n_points == 0 || budget == 0) {
+			auto end = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration<double>(end - start).count();
+			random_csv << budget / n_points << ';' 
+											<< _best.get_exec_str(input_fp, macs_dir, other_params)
+											<< ';' << _best.fitness << ';'
+											<< duration
+											<< std::endl;
+			chk.start_generation++;
+			write_info();
+			start = std::chrono::high_resolution_clock::now();
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration<double>(end - start).count();
 
-		random_csv << i << ';' << best.get_exec_str(input_fp, macs_dir, other_params) << ';' << best.fitness << ';' << duration << std::endl;
+		if (temp.fitness > _best.fitness) _best = temp;
 	}
 
-	return best;
+	return _best;
+}
+
+void random_search::read_info() {
+	auto &chk = config.chck();
+	auto &fs = chk.f_checkpoint;
+
+	if (!fs) return;
+	string line;
+	
+	if (getline(fs, line)) budget = static_cast<uint16_t>(stoul(line));
+}
+
+void random_search::write_info() {
+	auto &chk = config.chck();
+	string tmp_path = config.checkpoint_name() + ".tmp";
+
+	std::ofstream tmp(tmp_path, std::ios::trunc);
+	tmp << config.ini_path() << '\n'
+	    << chk.seed << '\n'
+	    << _best << '\n'
+	    << chk.start_generation << '\n'
+		<< budget << '\n';
+
+	tmp.flush();
+	tmp.close();
+
+	chk.f_checkpoint.close();
+	std::rename(tmp_path.c_str(), config.checkpoint_name().c_str());
+	chk.f_checkpoint.open(config.checkpoint_name(), std::ios::in | std::ios::out);
 }
