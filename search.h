@@ -10,6 +10,7 @@ protected:
 	parameter _best;
 public:
 	search(configuration &config) : config(config) {};
+	virtual ~search() = default;
 	inline void best(parameter &best) {_best = best;}
 	virtual parameter find_best() = 0;
 	virtual void write_info() = 0;

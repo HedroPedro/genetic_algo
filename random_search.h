@@ -16,6 +16,7 @@ public:
 		n_points = config.population();
 		budget = config.budget();
 	};
+
 	parameter find_best();
 
 	void write_info() override;
