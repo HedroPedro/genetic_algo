@@ -8,6 +8,7 @@ class search {
 protected:
 	configuration &config;
 	parameter _best;
+	std::ofstream open_run_csv(const string &filename, const string &header);
 public:
 	search(configuration &config) : config(config) {};
 	virtual ~search() = default;
