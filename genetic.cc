@@ -77,8 +77,7 @@ parameter serial_genetic::find_best() {
 
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	string name = oss.str();
-	const char *name_csv = name.c_str();
-	std::ofstream csv(name_csv); 
+	std::ofstream csv(name, std::ios::app); 
 	csv << "Generation;Fitness;Param;Budget;Time\n";
 	auto current_patience = patience;
 

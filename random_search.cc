@@ -16,7 +16,7 @@ parameter random_search::find_best() {
 	auto res_path = config.result_path();
 	ostringstream oss;
 	oss << "random_generations_" << generations << '_' << n_points << ".csv";
-	std::ofstream random_csv(oss.str());
+	std::ofstream random_csv(oss.str(), std::ios::app);
 	random_csv << "Iter;Fitness;Params;Time\n";
 	auto start = std::chrono::high_resolution_clock::now();
 	for(;budget != 0;) {

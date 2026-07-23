@@ -223,7 +223,7 @@ search *parse_checkpoint(char const *fp, configuration &config) {
 
 	alg->read_info();
 
-	return alg;	
+	return alg;
 }
 
 /* 
