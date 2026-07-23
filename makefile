@@ -10,4 +10,4 @@ build: $(SRCS)
 	$(CXX) $(CXX_FLAGS) -o alg $(SRCS)
 
 clean:
-	rm -rf alg alg_random
+	rm -rf alg
