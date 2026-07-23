@@ -104,10 +104,12 @@ There's two ways that you can contribute with the project
 If you change how arguments are parsed, checkpoint format, or the program name, **please** make sure you update the corresponding sections of this document!
 
 ## Bioinformatic
-- [ ] Testing on other pipelines
+- [ ] Testing on other pipelines and tools such as: 	
+	- [ ] STREME
+	- [ ] HOMER
+	- [ ] MEME-ChIP
 - [ ] Testing in other genome data such as mm
 - [ ] Comparison with other hyperparameter methods
-
 
 # License
 This project uses the MIT LICENSE, check [LICENSE](LICENSE) for more information
