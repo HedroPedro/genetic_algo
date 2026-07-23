@@ -9,6 +9,7 @@ std::ofstream search::open_run_csv(const string &filename, const string &header)
 	std::ofstream csv(filename, resuming ? std::ios::app : std::ios::trunc);
 	if (needs_header) {
 		csv << header << '\n';
+		csv.flush();
 	}
 	return csv;
 }
