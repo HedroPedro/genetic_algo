@@ -95,8 +95,8 @@ There's two ways that you can contribute with the project
 ## Code
 - [ ] Parallel version
 - [ ] Support for other types of files and fitness functions
-	- [ ] Mean of $e$-value
-	- [ ] Median of $e$-value
+	- [ ] Mean of $e$-value: $f(x) = -\log_{10}(\overline{e})$
+	- [ ] Median of $e$-value: $f(x) = -\log_{10}(\text{median}(e))$
 - [ ] Code optimization and refactoring
 - [ ] Dynamic makefile generation based on computer configurations
 - [ ] Documentation
