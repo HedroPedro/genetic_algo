@@ -15,56 +15,26 @@ void parameter::crossover(parameter &other) {
 	if (other.min_fold > other.max_fold) swap(other.min_fold, other.max_fold);
 }
 
-template<typename T>
-void bump(T *value, T min, T max, T delta);
-
 void parameter::mutate(void) {
 	same = false;
 	uint arg_to_change = get_random(5u);
-	uint step;
 	bool decrement = get_random() < 0.5;
-	double delta;
 	switch (arg_to_change) {
 		case 0:
-			delta = get_random(0.001, 0.004);
-			if ((decrement && q_val != min_q_val) || q_val == max_q_val) {
-				q_val = max(min_q_val, q_val - delta);
-				break;
-			}
-			q_val = min(max_q_val, q_val+delta);
+			q_val = bump(q_val, min_q_val, max_q_val, get_random(0.001, 0.004), decrement);
 		break;
 		case 1:
-			step = get_random(5U, 25U);
-			if ((decrement && bw != min_bw) || bw == max_bw) {
-				bw = max(min_bw, bw - step);
-				break;
-			}
-			bw = min(max_bw, bw + step);
+			bw = bump(bw, min_bw, max_bw, get_random(5U, 25U), decrement);
 		break;
 		case 2:
-			step = get_random(1U, 4U);
-			if((decrement && min_fold != min_min_fold) || min_fold == max_min_fold) {
-				min_fold = max(min_min_fold,  min_fold - step);			
-				break;
-			}
-			min_fold = min(max_min_fold,  min_fold + step);
+			min_fold = bump(min_fold, min_min_fold, max_min_fold, get_random(1U, 4U), decrement);
 		break;
 		case 3:
-			step = get_random(5U, 15U);
-			if((decrement && max_fold != min_max_fold) || max_fold == max_max_fold) {
-				max_fold = max(min_max_fold, max_fold - step);
-				break;
-			}
-			max_fold = min(max_max_fold, max_fold + step);
+			max_fold = bump(max_fold, min_max_fold, max_max_fold, get_random(5U, 15U), decrement);
 		break;
 		case 4:
 		default:
-			step = get_random(10U, 100U);
-			if((decrement && ext_size != min_ext_size) || ext_size == max_ext_size) {
-				ext_size = max(min_ext_size, ext_size - step);
-				break;
-			}
-			ext_size = min(max_ext_size, ext_size + step);
+			ext_size = bump(ext_size, min_ext_size, max_ext_size, get_random(10U, 100U), decrement);
 		break;
 	}
 

@@ -9,19 +9,14 @@ using std::swap;
 
 constexpr double min_q_val = 0.001;
 constexpr double max_q_val = 0.1;
-constexpr double q_val_interv = max_q_val - min_q_val;
 constexpr uint min_bw = 150U;
 constexpr uint max_bw = 450U;
-constexpr uint bw_interv = max_bw - min_bw;
 constexpr uint min_min_fold = 2U;
 constexpr uint max_min_fold = 10U;
-constexpr uint min_fold_interv = max_min_fold - min_min_fold;
 constexpr uint min_max_fold = 15U;
 constexpr uint max_max_fold = 50U;
-constexpr uint max_fold_interv = max_max_fold - min_max_fold;
 constexpr uint min_ext_size = 100U;
 constexpr uint max_ext_size = 300U;
-constexpr uint ext_size_interv = max_ext_size - min_ext_size;
 
 struct parameter {
 	uint bw;
@@ -78,6 +73,15 @@ inline std::istream& operator>>(std::istream& is, parameter &param) {
 		>> param.fitness  >> delim
 		>> param.same;
 	return is;
+}
+
+template<typename T>
+inline T bump(T curr, T min_v, T max_v, T delta, bool decrement) {
+	if ((decrement && curr != min_v) || curr == max_v) {
+		if (curr - min_v < delta) return min_v; // avoid unsigned underflow
+		return curr - delta;
+	}
+	return min(max_v, curr + delta);
 }
 
 #endif
