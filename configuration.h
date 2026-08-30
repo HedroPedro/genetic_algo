@@ -33,6 +33,7 @@ private:
 	uint16_t _population = 100;
 	uint16_t _budget = 0;
 	checkpoint _chck;
+	bool _rnd_is_set = false;
 public:
 	configuration() {};
 	
@@ -68,6 +69,9 @@ public:
 	inline uint16_t budget(void) const {return _budget;}
 	
 	inline checkpoint &chck(void) {return _chck;} //Read-only
+
+	inline void set_true_rnd_is_set() {_rnd_is_set = true;}
+	inline bool rnd_is_set() const {return _rnd_is_set;}
 };
 
 #endif

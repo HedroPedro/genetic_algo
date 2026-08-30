@@ -12,7 +12,6 @@
 
 using std::invalid_argument;
 using std::unordered_set;
-using std::stoul;
 
 constexpr auto HELP_FLAG = "-h";
 

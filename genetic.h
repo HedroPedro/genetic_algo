@@ -9,13 +9,14 @@
 #include "configuration.h"
 constexpr uint POP_AMOUNT = 100U;
 constexpr uint GENERATIONS = 1000U;
-constexpr uint PATIENCE = 35u;
+constexpr uint PATIENCE = 6u;
 
 class genetic : public search {
 protected:
 	double crossover_chance;
 	double mutation_rate;
 	uint patience;
+	uint current_patience;
 	uint16_t pop_amount;
 	uint16_t generations;
 	parameter *params;
@@ -25,6 +26,7 @@ public:
 			_best = parameter();
 			pop_amount = config.population();
 			generations = config.generations();
+			current_patience = patience;
 		};
 	
 	void write_info() override;

@@ -14,9 +14,17 @@ using std::getline;
 using std::cout;
 using std::ostringstream;
 using std::fstream;
+using std::stoul;
 
-uint get_random(uint n);
-uint get_random(uint min, uint max);
-double get_random();
-double get_random(double min, double max);
+namespace rng {
+    void init(std::mt19937& engine);
+
+    std::mt19937& global();
+
+    uint get_random(uint n);
+    uint get_random(uint min, uint max);
+    double get_random();
+    double get_random(double min, double max);
+}
+
 #endif

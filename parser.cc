@@ -193,7 +193,6 @@ search *parse_checkpoint(char const *fp, configuration &config) {
 	auto &chk = config.chck();
 	chk.f_checkpoint = fstream(fp);
 	auto &chck_fs = chk.f_checkpoint;
-
 	string line;
 	
 	if(!chck_fs) {
@@ -204,24 +203,21 @@ search *parse_checkpoint(char const *fp, configuration &config) {
 	getline(chck_fs, line);
 	auto alg = parse_config_file(line.c_str(), config);
 
-	getline(chck_fs, line);
+	// Seed and random
+	chck_fs >> chk.mt >> std::ws;
 
-	chk.seed = std::stol(line);
-	srand(chk.seed);
-
-	getline(chck_fs, line);
-	std::istringstream is(line);
-
+	//Best parameter
 	parameter param;
-
-	is >> param;
+	chck_fs >> param >> std::ws;
 	alg->best(param);
 
+	// Current Generation/Iteration 
 	getline(chck_fs, line);
-
 	chk.start_generation = stoul(line);
 
 	alg->read_info();
+
+	config.set_true_rnd_is_set();
 
 	return alg;
 }
@@ -229,7 +225,7 @@ search *parse_checkpoint(char const *fp, configuration &config) {
 /* 
 CHECKPOINT FILE MUST BE:
 INI FILE PATH
-SEED
+State
 _best PARAMS
 START_GENERATION
 <IF TYPE==GENETIC>

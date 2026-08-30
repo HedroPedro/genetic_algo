@@ -59,7 +59,7 @@ void random_search::write_info() {
 
 	std::ofstream tmp(tmp_path, std::ios::trunc);
 	tmp << config.ini_path() << '\n'
-	    << chk.seed << '\n'
+	    << chk.mt() << '\n'
 	    << _best << '\n'
 	    << chk.start_generation << '\n'
 		<< budget << '\n';

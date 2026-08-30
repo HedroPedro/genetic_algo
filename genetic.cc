@@ -1,14 +1,22 @@
 #include "genetic.h"
+using rng::get_random;
 
 void genetic::write_info() {
 	auto &chk = config.chck();
 	string tmp_path = config.checkpoint_name() + ".tmp";
 
 	std::ofstream tmp(tmp_path, std::ios::trunc);
+
+	if (!tmp) {
+		std::cerr << "Unable to create " << tmp_path << ". Closing program" << std::endl;
+		std::exit(1);
+	}
+
 	tmp << config.ini_path() << '\n'
-	    << chk.seed << '\n'
+	    << chk.mt << '\n'
 	    << _best << '\n'
-	    << chk.start_generation << '\n';
+	    << chk.start_generation << '\n'
+		<< current_patience << '\n';
 	
 	for (uint16_t i = 0; i < pop_amount; i++) {
 		tmp << params[i] << '\n';
@@ -29,10 +37,11 @@ void genetic::read_info() {
 	if(!fs) return;
 
 	string line;
+	getline(fs, line);
+	current_patience = stoul(line);
+
 	for(uint i = 0; i < pop_amount; i++) {
-		getline(fs, line);
-		std::istringstream pis(line);
-		pis >> params[i];
+		fs >> params[i] >> std::ws;
 	}
 
 }
@@ -77,7 +86,6 @@ parameter serial_genetic::find_best() {
 
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	auto csv = open_run_csv(oss.str(), "Generation;Fitness;Param;Budget;Time");
-	auto current_patience = patience;
 
 	uint i = chk.start_generation;
 	for(;i < generations; i++) {

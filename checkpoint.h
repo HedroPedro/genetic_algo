@@ -11,7 +11,7 @@ enum modes {
 
 struct checkpoint {
 	uint16_t start_generation = 0;
-	time_t seed = time(NULL);
+	std::mt19937 mt;
 	fstream f_checkpoint;
 };
 

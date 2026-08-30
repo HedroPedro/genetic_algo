@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include "utils.h"
+using rng::get_random;
 using std::min;
 using std::max;
 using std::swap;
