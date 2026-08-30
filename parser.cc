@@ -49,14 +49,14 @@ search *parse_cmd(int argc, char *argv[], configuration &config) {
 	return parse_config_file(argv[1], config);
 }
 
- search *parse_config_file(char const *fp, configuration &config) {
+search *parse_config_file(char const *fp, configuration &config, bool from_ini) {
 	std::ifstream conf_if(fp);
 	string line;
 	bool is_random = false;
 	bool any_error = false;
 	uint line_pos = 0;
 	unordered_set<string> req_set = {EXPERIMENT_ATTR, SHELL_ATTR, TOMTOM_RES_ATTR};
-	
+
 	if (!conf_if) {
 		cout << "Configuration file " << fp << " was not found\n";
 		exit(1);
@@ -155,7 +155,8 @@ search *parse_cmd(int argc, char *argv[], configuration &config) {
 				continue;
 			}
 
-			cout << "Line: " << line_pos << "; invalid value " << value << "\n";
+			cout << "Line: " << line_pos << "; invalid value " << value << ". Guessing Genetic...\n";
+			continue;
 		}
 
 		cout << "UNKNOWN ARGUMENT. IGNORING...\n";
@@ -181,11 +182,19 @@ search *parse_cmd(int argc, char *argv[], configuration &config) {
 			std::ios::in | std::ios::out | std::ios::trunc);
 	}
 
+	if (from_ini) {
+		std::random_device rd;
+		auto seed = rd();
+		config.chck().mt.seed(seed);
+		rng::init(config.chck().mt);
+	}
+
 	//Create the corresponding algorithm
 	if (is_random) {
 		return new random_search(config);
 	}
 
+	std::cout << "Parsed" << std::endl;
 	return new serial_genetic(config);
 }
 
@@ -201,10 +210,14 @@ search *parse_checkpoint(char const *fp, configuration &config) {
 	}
 
 	getline(chck_fs, line);
-	auto alg = parse_config_file(line.c_str(), config);
+	auto ini_fp = line.c_str();
 
 	// Seed and random
 	chck_fs >> chk.mt >> std::ws;
+
+	rng::init(chk.mt);
+
+	auto alg = parse_config_file(ini_fp, config, false);
 
 	//Best parameter
 	parameter param;

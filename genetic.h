@@ -23,7 +23,6 @@ protected:
 public:
 	genetic(configuration &config) :
 		search(config), crossover_chance(0.6), mutation_rate(0.05), patience(PATIENCE) {
-			_best = parameter();
 			pop_amount = config.population();
 			generations = config.generations();
 			current_patience = patience;
