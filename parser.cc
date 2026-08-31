@@ -176,7 +176,6 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 		cout << "UNKNOWN ARGUMENT. IGNORING...\n";
 	}
 
-	
 	if (!req_set.empty()) {
 		any_error = true;
 		for (const auto & key : req_set) {
@@ -190,7 +189,6 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 	}
 
 	auto &chk = config.chck();
-
 	if (!chk.f_checkpoint.is_open()) {
 		chk.f_checkpoint.open(config.checkpoint_name(),
 			std::ios::in | std::ios::out | std::ios::trunc);
@@ -208,7 +206,6 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 		return new random_search(config);
 	}
 
-	std::cout << "Parsed" << std::endl;
 	return new serial_genetic(config);
 }
 
