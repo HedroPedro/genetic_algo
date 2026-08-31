@@ -143,7 +143,7 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 
 		if (attribute.compare(PATIENCE_ATTR) == 0) {
 			auto i = stoul(value);
-			config.generations(i);
+			config.patience(i);
 			continue;
 		}
 
