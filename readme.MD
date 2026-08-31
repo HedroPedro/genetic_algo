@@ -35,8 +35,9 @@ Run `./alg -h` at any time to see this same information from the command line.
 | `MODE` | `GENETIC` or `RANDOM` | `GENETIC` |
 | `POP` | Population size (genetic) / points per iteration (random) | `100` |
 | `ITER` | Number of generations / iterations | `100` |
-| `BUDGET` | Fixed evaluation budget for Random Search. `0` = calculated as `POP × ITER` | `0` |
 | `CHECKPOINT` | Path where the checkpoint file will be written | `checkpoint.chk` |
+| `PATIENCE` | Generations without improvement before early stopping (genetic). `0` = equal to `ITER` | `6` |
+| `BUDGET` | Fixed evaluation budget for Random Search. `0` = calculated as `POP × ITER` | `0` |
 
 ### Example configuration file
 ```ini
