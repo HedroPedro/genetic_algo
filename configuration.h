@@ -16,9 +16,13 @@ constexpr auto POP_ATTR = "POP";
 constexpr auto ITER_ATTR = "ITER";
 constexpr auto BUDGET_ATTR = "BUDGET";
 constexpr auto CHECKPOINT_NAME_ATTR = "CHECKPOINT";
+constexpr auto PATIENCE_ATTR = "PATIENCE";
 
 static constexpr auto default_macs_dir = "res";
 static constexpr auto default_checkpoint_name = "checkpoint.chk";
+static constexpr auto GENERATIONS = 100u;
+static constexpr auto POPULATION = 100u;
+static constexpr auto PATIENCE = 6u;
 
 class configuration {
 private:
@@ -29,14 +33,13 @@ private:
 	string _other_params = "";
 	string _ini_file_name;
 	string _checkpoint_name = default_checkpoint_name;
-	uint16_t _generations = 100;
-	uint16_t _population = 100;
+	uint16_t _generations = GENERATIONS;
+	uint16_t _population = POPULATION;
 	uint16_t _budget = 0;
 	checkpoint _chck;
+	uint _patience = PATIENCE;
 	bool _rnd_is_set = false;
 public:
-	configuration() {};
-	
 	inline void sh_path(string &sh_path) {_sh_path = sh_path;} //Write only
 	string sh_exec_cmd();
 	string sh_exec_cmd(int id);
@@ -69,6 +72,9 @@ public:
 	inline uint16_t budget(void) const {return _budget;}
 	
 	inline checkpoint &chck(void) {return _chck;} //Read-only
+
+	inline void patience(uint patience) {_patience = patience;}
+	inline uint patience() const {return _patience;}
 
 	inline void set_true_rnd_is_set() {_rnd_is_set = true;}
 	inline bool rnd_is_set() const {return _rnd_is_set;}

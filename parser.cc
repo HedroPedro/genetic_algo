@@ -5,17 +5,20 @@ void print_help() {
 	cout << "Command Line Flags:\n";
 	cout << "-h: Print this information\n";
 	cout << "Checkpoint MUST have extension as .chk\n";
-	cout << "-- CONFIGURATION PARAMETERS --\n";
-	cout << EXPERIMENT_ATTR << "- Path for .bam file(Required)\n";
-	cout << SHELL_ATTR << "- Path for the shell pipeline after(Required)\n";
-	cout << TOMTOM_RES_ATTR << "- Path for the TOMTOM generated tsv(Required)\n";
-	cout << OTHER_PARAMS_ATTR << "- Extra parameters like genome size or broad(Defaults to nothing)\n";
-	cout << MACS_DIR_ATTR << "- Name for the MACS directory(Defaults to res)\n";
+	cout << "== CONFIGURATION PARAMETERS ==\n";
+	cout << EXPERIMENT_ATTR << "- Path for .bam file (Required)\n";
+	cout << SHELL_ATTR << "- Path for the shell pipeline after (Required)\n";
+	cout << TOMTOM_RES_ATTR << "- Path for the TOMTOM generated tsv (Required)\n";
+	cout << OTHER_PARAMS_ATTR << "- Extra parameters like genome size or broad (Defaults to nothing)\n";
+	cout << MACS_DIR_ATTR << "- Name for the MACS directory (Defaults to res)\n";
+	cout << CHECKPOINT_NAME_ATTR << "- Path to checkpoint file (Defaults 'checkpoint.chk')" << std::endl;
 	cout << MODE_ATTR << "- Select mode for algorithm (Defaults to " << MODE_GENETIC_ATTR << "). Expected values: " << MODE_GENETIC_ATTR << " or " << MODE_RANDOM_ATTR << '\n';
 	cout << POP_ATTR << "- Population size or amount for points for each iteration (Defaults to 100)\n";
 	cout << ITER_ATTR << "- Amount of iterations (Defaults to 100)\n";
-	cout << BUDGET_ATTR << "- Budget for Random Search. If zero it will calculte via Population x Iterations(Defaults to 0)\n";
-	cout << CHECKPOINT_NAME_ATTR << "- Path to checkpoint file(Defaults 'checkpoint.chk')" << std::endl;
+	cout << "== GENETIC ALGORITHM SPECIFIC ==\n";
+	cout << PATIENCE_ATTR << "- Defines the amount of generations before stopping. If zero it wil assume PATIENCE=GENERATIONS (Defaults to 6)" << std::endl;
+	cout << "== RANDOM SERACH SPECIFIC ==\n";
+	cout << BUDGET_ATTR << "- Budget for Random Search. If zero it will calculte via Population x Iterations (Defaults to 0)\n";
 	cout << "== FILE EXEMPLE ==\n";
 	cout << EXPERIMENT_ATTR << "=experiment.bam\n";
 	cout << SHELL_ATTR << "=run.sh\n";
@@ -49,6 +52,17 @@ search *parse_cmd(int argc, char *argv[], configuration &config) {
 	return parse_config_file(argv[1], config);
 }
 
+bool is_file_not_valid(string &fp) {
+	std::ifstream ifs(fp);
+
+	if (!ifs) {
+		cout << "Could not open file: " << fp << '\n';
+		return true;
+	}
+
+	return false;
+}
+
 search *parse_config_file(char const *fp, configuration &config, bool from_ini) {
 	std::ifstream conf_if(fp);
 	string line;
@@ -56,7 +70,7 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 	bool any_error = false;
 	uint line_pos = 0;
 	unordered_set<string> req_set = {EXPERIMENT_ATTR, SHELL_ATTR, TOMTOM_RES_ATTR};
-
+	
 	if (!conf_if) {
 		cout << "Configuration file " << fp << " was not found\n";
 		exit(1);
@@ -78,28 +92,22 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 		auto value = line.substr(eq_pos+1);
 
 		if (attribute.compare(EXPERIMENT_ATTR) == 0) {
-			std::ifstream ifs(value);
-			if (!ifs) {
-				cout << "Could not open file: " << value << '\n';
+			if (is_file_not_valid(value)) {
 				any_error = true;
 				continue;
 			}
 
-			ifs.close();
 			req_set.erase(EXPERIMENT_ATTR);
 			config.experiment(value);
 			continue;
 		}
 
 		if (attribute.compare(SHELL_ATTR) == 0) {
-			std::ifstream ifs(value);
-			if (!ifs) {
-				cout << "Could not open file: " << value << '\n';
+			if (is_file_not_valid(value)) {
 				any_error = true;
 				continue;
 			}
 
-			ifs.close();
 			req_set.erase(SHELL_ATTR);
 			config.sh_path(value);
 			continue;
@@ -128,6 +136,12 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 		}
 
 		if (attribute.compare(ITER_ATTR) == 0) {
+			auto i = stoul(value);
+			config.generations(i);
+			continue;
+		}
+
+		if (attribute.compare(PATIENCE_ATTR) == 0) {
 			auto i = stoul(value);
 			config.generations(i);
 			continue;

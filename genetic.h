@@ -7,9 +7,6 @@
 #include "search.h"
 #include "utils.h"
 #include "configuration.h"
-constexpr uint POP_AMOUNT = 100U;
-constexpr uint GENERATIONS = 1000U;
-constexpr uint PATIENCE = 6u;
 
 class genetic : public search {
 protected:
@@ -22,9 +19,11 @@ protected:
 	parameter *params;
 public:
 	genetic(configuration &config) :
-		search(config), crossover_chance(0.6), mutation_rate(0.05), patience(PATIENCE) {
+		search(config), crossover_chance(0.6), mutation_rate(0.05) {
 			pop_amount = config.population();
 			generations = config.generations();
+			patience = config.patience();
+			if (patience == 0) patience = generations;
 			current_patience = patience;
 		};
 	
