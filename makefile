@@ -1,5 +1,5 @@
 CXX=g++
-CXX_FLAGS=-Wall -Wextra -O3 -march=native -mtune=native -std=c++11
+CXX_FLAGS=-Wall -Wextra -O3 -march=native -mtune=native -std=c++14
 SRCS=$(wildcard *.cc)
 
 .PHONY: all clean
