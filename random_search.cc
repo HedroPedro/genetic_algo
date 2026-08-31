@@ -19,7 +19,6 @@ parameter random_search::find_best() {
 	auto random_csv = open_run_csv(oss.str(), "Iter;Fitness;Params;Time");
 
 	auto start = std::chrono::high_resolution_clock::now();
-	uint iter_number = 0;
 
 	while(budget != 0) {
 		parameter temp;
@@ -27,10 +26,10 @@ parameter random_search::find_best() {
 		if (temp.fitness > _best.fitness) _best = temp;
 
 		budget--;
-		if (budget % n_points == 0 || budget == 0) {
+		if (budget % n_points == 0) {
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration<double>(end - start).count();
-			random_csv << budget / n_points << ';' 
+			random_csv << chk.start_generation << ';' 
 											<< _best.get_exec_str(input_fp, macs_dir, other_params)
 											<< ';' << _best.fitness << ';'
 											<< duration
