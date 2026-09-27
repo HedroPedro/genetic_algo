@@ -81,8 +81,7 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 
 	while(getline(conf_if, line)) {
 		line_pos++;
-		if (line.empty()) continue;
-		if (line[0] == '#' || line[0] == ';') continue;
+		if (line.empty() || line[0] == '#' || line[0] == ';') continue;
 
 		auto eq_pos = line.find('=');
 		if (eq_pos == string::npos) {
