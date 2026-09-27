@@ -2,13 +2,10 @@
 
 void parameter::crossover(parameter &other) {
 	same = false;
-	max_fold = other.max_fold;
-	ext_size = other.ext_size;
-
 	other.same = false;
-	other.q_val = q_val;
-	other.bw = bw;
-	other.min_fold = min_fold;
+
+	swap(max_fold, other.max_fold);
+	swap(ext_size, other.ext_size);
 
 	if (min_fold > max_fold) swap(min_fold, max_fold);
 
