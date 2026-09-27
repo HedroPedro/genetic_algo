@@ -80,8 +80,11 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 	config.ini_path(fp_str);
 
 	while(getline(conf_if, line)) {
-		auto eq_pos = line.find('=');
 		line_pos++;
+		if (line.empty()) continue;
+		if (line[0] == '#' || line[0] == ';') continue;
+
+		auto eq_pos = line.find('=');
 		if (eq_pos == string::npos) {
 			cout << "Line: " << line_pos << "; could not find '='"<< std::endl;
 			any_error = true;
@@ -258,3 +261,4 @@ START_GENERATION
 BUDGET
 <END-IF>
 */
+
