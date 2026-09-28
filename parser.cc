@@ -15,6 +15,7 @@ void print_help() {
 	cout << MODE_ATTR << "- Select mode for algorithm (Defaults to " << MODE_GENETIC_ATTR << "). Expected values: " << MODE_GENETIC_ATTR << " or " << MODE_RANDOM_ATTR << '\n';
 	cout << POP_ATTR << "- Population size or amount for points for each iteration (Defaults to 100)\n";
 	cout << ITER_ATTR << "- Amount of iterations (Defaults to 100)\n";
+	cout << THREADS_ATTR << "- Amount of threads (Defaults to 0). If zero it means serial version\n";
 	cout << "== GENETIC ALGORITHM SPECIFIC ==\n";
 	cout << PATIENCE_ATTR << "- Defines the amount of generations before stopping. If zero it wil assume PATIENCE=GENERATIONS (Defaults to 6)" << std::endl;
 	cout << "== RANDOM SERACH SPECIFIC ==\n";
@@ -175,6 +176,12 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 			continue;
 		}
 
+		if (attribute.compare(THREADS_ATTR) != 0) {
+			auto i = stoul(value);
+			config.threads(i);
+			continue;
+		}
+
 		cout << "UNKNOWN ARGUMENT. IGNORING...\n";
 	}
 
@@ -205,8 +212,12 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 
 	//Create the corresponding algorithm
 	if (is_random) {
+		if (config.threads() != 0) return nullptr; //TODO: Implement
+
 		return new random_search(config);
 	}
+
+	if (config.threads() != 0) return new paralel_genetic(config, config.threads());
 
 	return new serial_genetic(config);
 }

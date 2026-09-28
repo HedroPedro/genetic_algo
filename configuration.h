@@ -17,6 +17,7 @@ constexpr auto ITER_ATTR = "ITER";
 constexpr auto BUDGET_ATTR = "BUDGET";
 constexpr auto CHECKPOINT_NAME_ATTR = "CHECKPOINT";
 constexpr auto PATIENCE_ATTR = "PATIENCE";
+constexpr auto THREADS_ATTR = "THREADS";
 
 static constexpr auto default_macs_dir = "res";
 static constexpr auto default_checkpoint_name = "checkpoint.chk";
@@ -38,6 +39,7 @@ private:
 	uint16_t _budget = 0;
 	checkpoint _chck;
 	uint _patience = PATIENCE;
+	uint _threads = 0;
 	bool _rnd_is_set = false;
 public:
 	inline void sh_path(string &sh_path) {_sh_path = sh_path;} //Write only
@@ -75,6 +77,9 @@ public:
 
 	inline void patience(uint patience) {_patience = patience;}
 	inline uint patience() const {return _patience;}
+
+	inline void threads(uint threads) {_threads = threads;}
+	inline uint threads() const {return _threads;}
 
 	inline void set_true_rnd_is_set() {_rnd_is_set = true;}
 	inline bool rnd_is_set() const {return _rnd_is_set;}
