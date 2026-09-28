@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <stdint.h>
+#include <thread>
 using std::rand;
 using std::vector;
 using std::string;
@@ -15,16 +15,20 @@ using std::cout;
 using std::ostringstream;
 using std::fstream;
 using std::stoul;
+using std::thread;
 
 namespace rng {
     void init(std::mt19937& engine);
 
     std::mt19937& global();
 
-    uint get_random(uint n);
-    uint get_random(uint min, uint max);
+    template <typename T>
+    T get_random(T n);
+
+    template <typename T>
+    T get_random(T min, T max);
+    
     double get_random();
-    double get_random(double min, double max);
 }
 
 #endif
