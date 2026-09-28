@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "configuration.h"
 
+
 class genetic : public search {
 protected:
 	double crossover_chance;
@@ -29,6 +30,7 @@ public:
 	
 	void write_info() override;
 	void read_info()  override;
+	void new_generation();
 };
 
 class serial_genetic : public genetic {
@@ -42,6 +44,25 @@ public:
 	};
 
 	parameter find_best() override;
-	void new_generation();
 };
+
+class paralel_genetic : public genetic {
+private:
+	uint n_threads;
+	vector<parameter &> local_bests;
+	vector<uint> local_budgets;
+public:
+	paralel_genetic(configuration &config, uint n_threads) : genetic(config), n_threads(n_threads) {
+		params = new parameter[pop_amount];
+		local_bests.resize(pop_amount/n_threads);
+		local_budgets.resize(pop_amount/n_threads);
+	};
+
+	inline ~paralel_genetic() {
+		delete[] params;
+	};
+
+	parameter find_best();
+};
+
 #endif

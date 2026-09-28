@@ -46,7 +46,7 @@ void genetic::read_info() {
 
 }
 
-inline void serial_genetic::new_generation() {
+inline void genetic::new_generation() {
 	uint16_t pop_amount = config.population();
 	for (uint j = 0; j + 1 < pop_amount; j += 2) {
 		parameter &a = params[j];
@@ -73,10 +73,8 @@ inline void serial_genetic::new_generation() {
 
 parameter serial_genetic::find_best() {
 	uint j;
-	double fitness;
 	bool changed;
 	const auto &sh_str = config.sh_exec_cmd();
-	const auto &sh_cmd = sh_str.c_str();
 	const auto &input_fp = config.experiment();
 	const auto &macs_dir = config.macs_dir();
 	const auto &res_fp = config.result_path();
@@ -87,17 +85,16 @@ parameter serial_genetic::find_best() {
 	oss << "generations_" << generations << '_'<< pop_amount << ".csv";
 	auto csv = open_run_csv(oss.str(), "Generation;Fitness;Param;Budget;Time");
 
-	uint i = chk.start_generation;
-	for(;i < generations; i++) {
+	for(uint i = chk.start_generation; i < generations; i++) {
 		changed = false;
 		uint budget = 0;
 		auto start = std::chrono::high_resolution_clock::now();
 		for(j = 0; j < pop_amount; j++) {
 			parameter &cache = params[j];
 			if(cache.same) continue;
-			fitness = cache.execute_param(input_fp, macs_dir, sh_cmd, res_fp, other_params);
+			cache.execute_param(input_fp, macs_dir, sh_str, res_fp, other_params);
 			budget++;
-			if (fitness > _best.fitness) {
+			if (cache.fitness > _best.fitness) {
 				_best = cache;
 				changed = true;
 			}
@@ -124,6 +121,80 @@ parameter serial_genetic::find_best() {
 		chk.start_generation++;
 		write_info();
 	}
+	csv.close();
+	return _best;
+}
+
+parameter paralel_genetic::find_best() {
+	uint j;
+	bool changed;
+	const auto &sh_str = config.sh_exec_cmd();
+	const auto &input_fp = config.experiment();
+	const auto &macs_dir = config.macs_dir();
+	const auto &res_fp = config.result_path();
+	const auto &other_params = config.other_params();
+	auto &chk = config.chck();
+	ostringstream oss;
+	vector<std::thread> threads(n_threads);
+	uint stride = pop_amount / n_threads;
+
+	oss << "paralel_generations_" << generations << '_'<< pop_amount << ".csv";
+	auto csv = open_run_csv(oss.str(), "Generation;Fitness;Param;Budget;Time");
+	auto lambda = [&](uint id, uint start, uint end){
+			const auto &sh_str = config.sh_exec_cmd(id);
+			uint local_budget = 0;
+			parameter local_best = _best;
+	
+			for(uint i = start; i < end; i++) {
+				parameter &cache = params[i];
+				if(cache.same) continue;
+				cache.execute_param(input_fp, macs_dir, sh_str, res_fp, other_params, id);
+				local_budget++;
+				if (cache.fitness > local_best.fitness) local_best = cache;
+			}
+
+		local_bests[id] = local_best;
+		local_budgets[id] = local_budget;
+	};
+
+	for(uint i = chk.start_generation; i < generations; i++) {
+		uint budget = 0;
+		changed = false;
+		auto start = std::chrono::high_resolution_clock::now();
+
+		for (uint j = 0; j < n_threads; j++)
+			threads[j] = thread(lambda, j, j * stride, j == n_threads-1 ? pop_amount : ((j+1) * pop_amount));			
+
+		for (uint j = 0; j < n_threads; j++)
+			threads[j].join();
+		
+		for (uint j = 0; j < n_threads; j++) {
+			budget += local_budgets[j];
+			if (_best.fitness < local_bests[j].fitness) {
+				_best = local_bests[j];
+				changed = true;
+			}
+		}
+
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration<double>(end - start).count();
+
+		csv << i << ';' << _best.fitness << ';'  << _best.get_exec_str(input_fp, macs_dir, other_params) 
+			<< ';' << budget <<  ';' << elapsed << std::endl;
+
+		if (!changed) {
+			uint index = get_random(pop_amount);
+			params[index] = _best;
+			params[index].same = true;
+			if ((--current_patience) == 0) break;
+		} else {
+			current_patience = patience;
+		}
+
+		new_generation();
+		write_info();
+	}
+
 	csv.close();
 	return _best;
 }
