@@ -126,7 +126,6 @@ parameter serial_genetic::find_best() {
 }
 
 parameter paralel_genetic::find_best() {
-	uint j;
 	bool changed;
 	const auto &sh_str = config.sh_exec_cmd();
 	const auto &input_fp = config.experiment();
@@ -135,10 +134,11 @@ parameter paralel_genetic::find_best() {
 	const auto &other_params = config.other_params();
 	auto &chk = config.chck();
 	ostringstream oss;
-	vector<std::thread> threads(n_threads);
+	vector<std::thread> threads;
+	threads.resize(n_threads);
 	uint stride = pop_amount / n_threads;
 
-	oss << "paralel_generations_" << generations << '_'<< pop_amount << ".csv";
+	oss << "parallel_generations_" << generations << '_'<< pop_amount << ".csv";
 	auto csv = open_run_csv(oss.str(), "Generation;Fitness;Param;Budget;Time");
 	auto lambda = [&](uint id, uint start, uint end){
 			const auto &sh_str = config.sh_exec_cmd(id);
@@ -163,7 +163,7 @@ parameter paralel_genetic::find_best() {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		for (uint j = 0; j < n_threads; j++)
-			threads[j] = thread(lambda, j, j * stride, j == n_threads-1 ? pop_amount : ((j+1) * pop_amount));			
+			threads[j] = std::thread(lambda, j, j * stride, j == n_threads-1 ? pop_amount : ((j+1) * stride));			
 
 		for (uint j = 0; j < n_threads; j++)
 			threads[j].join();

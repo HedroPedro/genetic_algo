@@ -176,13 +176,13 @@ search *parse_config_file(char const *fp, configuration &config, bool from_ini) 
 			continue;
 		}
 
-		if (attribute.compare(THREADS_ATTR) != 0) {
+		if (attribute.compare(THREADS_ATTR) == 0) {
 			auto i = stoul(value);
 			config.threads(i);
 			continue;
 		}
 
-		cout << "UNKNOWN ARGUMENT. IGNORING...\n";
+		cout << "UNKNOWN ARGUMENT "<< attribute << " . IGNORING...\n";
 	}
 
 	if (!req_set.empty()) {

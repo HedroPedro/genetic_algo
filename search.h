@@ -1,6 +1,7 @@
 #ifndef SEARCH_H_
 #define SEARCH_H_
 #include <fstream>
+#include <thread>
 #include "parameter.h"
 #include "configuration.h"
 
